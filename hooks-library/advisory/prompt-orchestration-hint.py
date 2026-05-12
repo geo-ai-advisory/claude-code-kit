@@ -13,6 +13,8 @@ prompt = data.get('user_prompt') or data.get('prompt') or data.get('text') or ''
 if not prompt:
     sys.exit(0)
 rules = [
+    # Жалоба на качество UI/UX — HARD-ABSOLUTE триггер на ПОЛНЫЙ pipeline (не быстрый fix)
+    (r'(ублюдск|как\s+из\s+жопы|отвратительн|неинформативн|кривой\s+UI|кривой\s+блок|кривое|сырое|сырой|снова\s+не\s+работает|опять\s+ты|не\s+тестил|не\s+прогонял|не\s+вызывал.*агент|всё\s+ещё\s+кривой|зачем\s+этот\s+блок|для\s+чего\s+нужен|выполни\s+регламент|позови\s+всех\s+агентов|комплексно)', 'product-architect+ui-design-architect+qa-scenario-tester (ПОЛНЫЙ pipeline на жалобу качества — НЕ быстрый fix)'),
     # Pre-flight продуктовый бриф (высокий уровень) — ПЕРВЫЙ
     (r'((дашборд|dashboard|витрин|vitrina|лендинг|landing|А.Б|A.B|эксперимент|experiment|новый.раздел|новая.фича|спроектируй|задизайн|интерфейс|отчёт|отчет))', 'product-architect (ОБЯЗАТЕЛЬНО ПЕРВЫЙ - 7 вопросов до Edit)'),
     # Screen-spec композиция конкретного экрана — СРАЗУ ПОСЛЕ product-architect
