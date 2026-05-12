@@ -5,7 +5,7 @@ Geo (Georgii <your-name>) - Head of Product Growth, <YourCompany> (InsurTech/Fin
 
 ## Routing
 В начале каждой задачи определи активный проект:
-1. Slash-команда / скилл (`/report-mfo` -> report).
+1. Slash-команда / скилл (`<report-skill>` -> report).
 2. Явный путь в запросе.
 3. Контекст текущей сессии.
 4. Если неясно - спроси.

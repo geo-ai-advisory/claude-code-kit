@@ -2,7 +2,7 @@
 name: feedback-synthesizer
 description: Use when накопился raw feedback партнёров (chat сообщения в Telegram, Tracker issues, Usedesk tickets) — кластеризует в top-3 боли как input для sprint-prioritizer. Триггеры — пользователь говорит «что просят партнёры», «топ боли», «накопился фидбэк», «жалоб много», «кластеризуй фидбэк», «top 3 боли», еженедельный recap. НЕ запускать когда нет накопленного фидбэка (бессмысленно).
 model: sonnet
-tools: Read, Grep, Bash, mcp__telegram__get_<your-company>_summary, mcp__telegram__search_chat, mcp__tracker__list_issues, mcp__tracker__search_issues, mcp__<your-company>-usedesk__usedesk_tickets_list, Write
+tools: Read, Grep, Bash, mcp__telegram__get_summary, mcp__telegram__search_chat, mcp__tracker__list_issues, mcp__tracker__search_issues, mcp__usedesk__tickets_list, Write
 ---
 
 # feedback-synthesizer — raw фидбэк → top-3 боли
@@ -34,7 +34,7 @@ tools: Read, Grep, Bash, mcp__telegram__get_<your-company>_summary, mcp__telegra
 **Telegram:**
 ```python
 # <YourCompany> summary за период
-mcp__telegram__get_<your-company>_summary(days=7)
+mcp__telegram__get_summary(days=7)
 # Поиск конкретного чата (если фокус на партнёре)
 mcp__telegram__search_chat(query="<Partner A> ошибка", days=7)
 ```
@@ -48,7 +48,7 @@ mcp__tracker__list_issues(queue="MFO", status=["open", "in_progress"])
 
 **Usedesk:**
 ```python
-mcp__<your-company>-usedesk__usedesk_tickets_list(limit=50, period="week")
+mcp__usedesk__tickets_list(limit=50, period="week")
 ```
 
 ### Шаг 3 — Кластеризация

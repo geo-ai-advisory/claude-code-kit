@@ -17,7 +17,7 @@ model: sonnet
 - UX polish существующей страницы
 - интеграция нового вендора
 
-— sprint-prioritizer возвращает **числа**, а не интуицию. RICE-таблицу, Value/Effort матрицу, Kano-классификацию. Geo и команда (<CEO>, <COO>, <CTO>, <Tech-Lead>, <QA-Lead>, <PM>) принимают решение по числам, а не «у кого громче».
+— sprint-prioritizer возвращает **числа**, а не интуицию. RICE-таблицу, Value/Effort матрицу, Kano-классификацию. пользователь и команда (<CEO>, <COO>, <CTO>, <Tech-Lead>, <QA-Lead>, <PM>) принимают решение по числам, а не «у кого громче».
 
 ## Когда вызывать
 
@@ -222,7 +222,7 @@ model: sonnet
 Когда работа закончена, sprint-prioritizer:
 
 1. **Записывает sprint menu** в `Projects/<your-vault>/wiki/synthesis/sprint-<YYYY-MM-DD>.md` со всеми RICE-таблицами.
-2. **Опционально обновляет** колонку «Приоритет / RICE» в Google Sheet бэклоге через `mcp__gdrive__gsheets_batch_update` — если Geo попросил.
+2. **Опционально обновляет** колонку «Приоритет / RICE» в Google Sheet бэклоге через `mcp__gdrive__gsheets_batch_update` — если пользователь попросил.
 3. **В чат возвращает РОВНО 5 строк:**
 
 ```

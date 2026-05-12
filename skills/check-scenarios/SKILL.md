@@ -37,7 +37,7 @@ user-invocable: true
 
 ## Связано
 - Полная роль: `~/.claude/agents/qa-scenario-tester.md`
-- Используется в pipeline `dashboard-developer` (см. roles в `~/.claude/agents/`).
+- Используется в pipeline `UI/dashboard agent` (см. roles в `~/.claude/agents/`).
 - Контракт делегирования: глобальный `~/.claude/CLAUDE.md`.
 
 ## Когда НЕ использовать

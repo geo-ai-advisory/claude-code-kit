@@ -75,7 +75,7 @@ source: rohitg00/agentmemory
 
 **Где живёт**:
 - `~/.claude/agents/*.md` — subagent'ы (14+ ролей: vault-writer, ui-quality-reviewer, mfo-db-researcher, memory-consolidator…).
-- `~/.claude/skills/*/SKILL.md` — slash-команды (/report-mfo, /sb-recap, /hh, …).
+- `~/.claude/skills/*/SKILL.md` — slash-команды (<report-skill>, /sb-recap, /hh, …).
 - `~/.claude/CLAUDE.md`, `<your-workspace>/CLAUDE.md`, `Projects/<x>/CLAUDE.md` — операционные правила.
 - `~/.claude/hooks/*.py` — автоматизированные guard'ы (selector-duplication-detector, claim-readiness-validator, prod-push-gate).
 

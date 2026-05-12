@@ -1,6 +1,6 @@
 ---
 name: verifier
-description: USE PROACTIVELY after Codex/external agent output, /html-push, mass vault writes, sverki — не публиковать без verifier PASS. Subagent для pre-publication checks. Вызывать ОБЯЗАТЕЛЬНО после Codex/OpenAI Agent, после /html-push, после массовых vault-записей (>5 страниц), после sverki/mfo-month-vendor. Проверяет ls путей, curl -I URL, sanity-query цифр в <your-db>. Возвращает STATUS: PASS|FAIL.
+description: USE PROACTIVELY after external agent output, /html-push, mass vault writes, vendor-reconciliation — не публиковать без verifier PASS. Subagent для pre-publication checks. Вызывать ОБЯЗАТЕЛЬНО после external LLM agent, после /html-push, после массовых vault-записей (>5 страниц), после vendor-reconciliation. Проверяет ls путей, curl -I URL, sanity-query цифр в <your-db>. Возвращает STATUS: PASS|FAIL.
 tools: Read, Bash, mcp__<your-db>__query, mcp__obsidian__obsidian_get_note
 model: haiku
 ---
@@ -11,10 +11,10 @@ model: haiku
 Финальная проверка перед публикацией/закрытием задачи: файлы существуют, URL живы, цифры сходятся с источником истины, frontmatter на свежих vault-страницах есть. Возвращает `STATUS: PASS` или `STATUS: FAIL` с причинами.
 
 ## Когда вызывать (триггеры)
-- После работы внешнего исполнителя — Codex, OpenAI Agent, скриптовый запуск, sub-skill.
+- После работы внешнего исполнителя — external agent, OpenAI Agent, скриптовый запуск, sub-skill.
 - После `/html-push` — проверить публичный URL.
 - После массовых vault-записей (>5 страниц через vault-writer/ingest-worker).
-- После sverki/mfo-month-vendor — проверить итоговые цифры в Sheet.
+- После vendor-reconciliation — проверить итоговые цифры в Sheet.
 
 ## Workflow
 1. Из задания получить: список путей, список URL, список ключевых цифр с источниками.

@@ -1,7 +1,7 @@
 ---
 name: telegram-summarizer
 description: Subagent для агрегатов по Telegram через MCP — daily_summary, mentions, <your-company>_summary. Вызывать на /morning, /telegram_daily, или любой запрос истории >1 дня. Никогда не выкачивать сырые сообщения чатов в контекст — только агрегаты.
-tools: mcp__telegram__get_daily_summary, mcp__telegram__get_mentions, mcp__telegram__get_<your-company>_summary, mcp__telegram__search_chat, Write
+tools: mcp__telegram__get_daily_summary, mcp__telegram__get_mentions, mcp__telegram__get_summary, mcp__telegram__search_chat, Write
 model: haiku
 ---
 
