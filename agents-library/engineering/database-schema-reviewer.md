@@ -139,13 +139,13 @@ model: sonnet
 
 Один из пользователей kit работал с MFO Dashboard (.NET 8 + SQL Server + локальная SQLite), его контекст выглядел так:
 
-- Database: SQL Server (prod, доступ через `mcp__insapp-db__*` MCP) + локальная experiment.db (SQLite)
+- Database: SQL Server (prod, доступ через `mcp__<your-db>__*` MCP) + локальная experiment.db (SQLite)
 - DB-access: `Services/ExperimentDb.cs` (ручной SQLite), SQL прямо в `Endpoints/StatsEndpoints.cs`, `SummaryEndpoints.cs`, `MfoEndpoints.cs`, `PartnerMfoEndpoints.cs`, `ShowcaseEndpoints.cs`
 - ORM: ручные параметризованные SQL через `SqlCommand`/`SqliteCommand`
 - Папка миграций: нет формальной системы миграций для SQL Server (read-only прод); для experiment.db — DDL прямо в коде ExperimentDb.cs при старте
-- MCP для inspect: `mcp__insapp-db__schema`, `mcp__insapp-db__query` (read-only)
+- MCP для inspect: `mcp__<your-db>__schema`, `mcp__<your-db>__query` (read-only)
 - Технические инварианты:
-  - `ProductTypeId = 5` (основной продукт МФО)
+  - `ProductTypeId = 5` (основной продукт <industry>)
   - `ChannelTypeId = 2` (отчёты/виджет)
   - `Applications.Created` — `datetimeoffset` с `+03:00` (Москва). Фильтр ТОЛЬКО через полуоткрытые интервалы `Created >= @from AND Created < @to`. `CAST(Created AS DATE) = @date` ломает индекс — full scan на миллионах строк = прод down.
   - `PartnerId` изолирован: фильтр `WHERE PartnerId = @partnerId` обязателен в любом partner-facing запросе. Эталон — `PartnerMfoEndpoints.cs`. Утечка между партнёрами = катастрофа.

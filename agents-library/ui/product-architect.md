@@ -235,17 +235,17 @@ product-architect — **первый**, остальные **после** brief 
 
 Один из пользователей kit работал с MFO Dashboard + lead-gen лендингами + content machine, его контекст выглядел так:
 
-- Тип проекта: B2B SaaS dashboard (MFO Dashboard для партнёров), lead-gen лендинги (geo-ai-advisory), content-machine (статьи)
+- Тип проекта: B2B SaaS dashboard (MFO Dashboard для партнёров), lead-gen лендинги (<your-advisory>), content-machine (статьи)
 - Целевой viewport: 1280-1600 desktop (insurance/fintech B2B аудитория, не mobile-first)
-- Аудитория: 4 партнёра МФО (Локо-Банк, Хиппо, Пампаду, МФО Инсап), внутренняя команда Insapp, читатели Telegram-канала «Гео в IT»
-- Дизайн-система: `Projects/second-brain/wiki/concepts/html-report-design-system.md` (Inter font, max-width 1040, нумерованные секции, карточки)
-- Reference catalog: `Projects/second-brain/wiki/concepts/reference-platforms.md`
-- Domain knowledge: `Projects/second-brain/wiki/concepts/` — `design-balance.md`, `ui-grid-discipline.md`, `html-button-states.md`, `showcase-anchor-position.md`, `ab-experiment-product-thinking.md`
+- Аудитория: 4 партнёра <industry> (Локо-Банк, <Partner B>, <Partner C>, <Partner D>), внутренняя команда <YourCompany>, читатели Telegram-канала «Гео в IT»
+- Дизайн-система: `Projects/<your-vault>/wiki/concepts/html-report-design-system.md` (Inter font, max-width 1040, нумерованные секции, карточки)
+- Reference catalog: `Projects/<your-vault>/wiki/concepts/reference-platforms.md`
+- Domain knowledge: `Projects/<your-vault>/wiki/concepts/` — `design-balance.md`, `ui-grid-discipline.md`, `html-button-states.md`, `showcase-anchor-position.md`, `ab-experiment-product-thinking.md`
 - Domain knowledge mapping:
   | Тип задачи | Файлы для чтения |
   |---|---|
   | А/Б эксперименты, лидерборд, heatmap офферов | `wiki/concepts/ab-experiment-product-thinking.md` |
-  | Витрина МФО, showcase, порядок офферов | `wiki/concepts/showcase-anchor-position.md` + `ab-experiment-product-thinking.md` |
-  | Партнёрский кабинет МФО (Cabinet) | `wiki/partners/<slug>.md` для конкретного партнёра (loko-bank, hippo, pampadu, mfo-insap) |
+  | Витрина <industry>, showcase, порядок офферов | `wiki/concepts/showcase-anchor-position.md` + `ab-experiment-product-thinking.md` |
+  | Партнёрский кабинет <industry> (Cabinet) | `wiki/partners/<slug>.md` для конкретного партнёра (loko-bank, hippo, pampadu, mfo-insap) |
   | HTML отчёт | `wiki/concepts/html-report-design-system.md` |
   | Любой dashboard | `wiki/concepts/design-balance.md` + `ui-grid-discipline.md` |

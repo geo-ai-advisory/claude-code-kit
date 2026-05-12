@@ -196,15 +196,15 @@ const spacings = [...document.querySelectorAll('*')]
 
 Один из пользователей kit работал с MFO Dashboard + lead-gen лендингами, его контекст выглядел так:
 
-- Frontend файлы: `Projects/report/dashboard/wwwroot/*.html, *.css, static/*.js`
-- Локальный запуск: `cd Projects/report/dashboard && dotnet run`
+- Frontend файлы: `Projects/<your-dashboard>/wwwroot/*.html, *.css, static/*.js`
+- Локальный запуск: `cd Projects/<your-reports>/dashboard && dotnet run`
 - URL: `http://localhost:5000`
 - Целевой viewport: 1280-1600 (B2B desktop dashboard)
 - Дизайн-система:
-  - `Projects/second-brain/wiki/concepts/design-balance.md` — цвет управляющий не декоративный
-  - `Projects/second-brain/wiki/concepts/html-report-design-system.md` — градиент header, Inter @import, max-width 1040, нумерованные секции, карточки
-  - `Projects/second-brain/wiki/concepts/html-button-states.md` — обязательны default/hover/active
-  - `Projects/second-brain/wiki/concepts/ui-grid-discipline.md` — контролы в одну строку
+  - `Projects/<your-vault>/wiki/concepts/design-balance.md` — цвет управляющий не декоративный
+  - `Projects/<your-vault>/wiki/concepts/html-report-design-system.md` — градиент header, Inter @import, max-width 1040, нумерованные секции, карточки
+  - `Projects/<your-vault>/wiki/concepts/html-button-states.md` — обязательны default/hover/active
+  - `Projects/<your-vault>/wiki/concepts/ui-grid-discipline.md` — контролы в одну строку
 - Browser tool: `mcp__playwright__*` + `mcp__Claude_Preview__*`
 - Reference: Linear (transitions, type scale), Stripe (spacing rhythm, цветовая иерархия), Vercel (контраст), Notion (whitespace)
 - Дополнительный риск: dashboard работает на 1280-1600 — нельзя оставлять тонкие колонки или горизонтальный scroll на 1280

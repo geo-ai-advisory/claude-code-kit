@@ -177,30 +177,30 @@ next: <main-session action — либо коммит, либо что фикси
 Один из пользователей kit работал с MFO Dashboard (.NET 8 + SQL Server), его контекст выглядел так:
 
 - Backend: .NET 8 ASP.NET Core Minimal API
-- Локальный запуск: `cd Projects/report/dashboard && dotnet run`
+- Локальный запуск: `cd Projects/<your-reports>/dashboard && dotnet run`
 - Порт: `localhost:5000` (НЕ 5057)
-- Endpoint файлы: `Projects/report/dashboard/Endpoints/*.cs`
+- Endpoint файлы: `Projects/<your-dashboard>/Endpoints/*.cs`
 
   | Файл | Routes |
   |---|---|
   | `AuthEndpoints.cs` | `/api/auth/login`, `/api/auth/logout`, `/api/auth/me` |
   | `ExperimentEndpoints.cs` | `/api/experiments`, `/api/experiments/{id}`, `/api/experiments/start`, `/api/experiments/stop` |
-  | `MfoEndpoints.cs` | `/api/mfo/*` — каталог МФО |
+  | `MfoEndpoints.cs` | `/api/mfo/*` — каталог <industry> |
   | `PartnerMfoEndpoints.cs` | `/api/partner/*` — кабинет партнёра |
   | `ShowcaseEndpoints.cs` | `/api/showcase` — настройка витрины |
   | `StatsEndpoints.cs` | `/api/stats` — статистика, кампании, выдачи |
   | `SummaryEndpoints.cs` | `/api/summary` — сводка |
   | `UsersEndpoints.cs` | `/api/users` — управление пользователями |
 
-- DTO: `Projects/report/dashboard/Models/*.cs`
+- DTO: `Projects/<your-dashboard>/Models/*.cs`
 - Auth: cookie-based, login через `/api/auth/login`
-- Credentials: `Projects/report/journals/2026-05-04-dashboard-fivetask/CREDENTIALS.md` — owner (geom), 5 admin, 3 user-партнёра. Локальный seed = копия prod seed.
+- Credentials: `Projects/<your-reports>/journals/2026-05-04-dashboard-fivetask/CREDENTIALS.md` — owner (<your-username>), 5 admin, 3 user-партнёра. Локальный seed = копия prod seed.
 - Роли: `owner`, `admin`, `user` (partner-cabinet)
-- DB cross-check: `mcp__insapp-db__query` (read-only, обязательно с LIMIT)
-- Tenant: PartnerId изолирован — каждый partner-user видит только свой PartnerId. Партнёры в БД: Локо-Банк, Хиппо, Пампаду, МФО Инсап.
+- DB cross-check: `mcp__<your-db>__query` (read-only, обязательно с LIMIT)
+- Tenant: PartnerId изолирован — каждый partner-user видит только свой PartnerId. Партнёры в БД: Локо-Банк, <Partner B>, <Partner C>, <Partner D>.
 - Запуск тестов:
   ```bash
-  cd "Projects/report/dashboard"
+  cd "Projects/<your-reports>/dashboard"
   dotnet run &
   # ждём http://localhost:5000
   # логинимся под owner/admin/user → cookies в /tmp/cookies-<role>.txt

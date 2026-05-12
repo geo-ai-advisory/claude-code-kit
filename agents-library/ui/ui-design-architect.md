@@ -492,16 +492,16 @@ references: <2-3 платформы>
 - Тип проекта: B2B SaaS dashboard (MFO Dashboard для 4 партнёров)
 - Целевой viewport: 1280-1600 desktop
 - Frontend: vanilla JS, без bundler'а
-- Shared components: `Projects/report/dashboard/wwwroot/static/components/`
-- Грэп: `grep -rn "render<Entity>\|<entity>.*compact\|<entities>.map" Projects/report/dashboard/wwwroot/static/components/ Projects/report/dashboard/wwwroot/`
-- Дизайн-система: `Projects/second-brain/wiki/concepts/html-report-design-system.md` (Inter, max-width, нумерованные секции, карточки)
-- Reference catalog: `Projects/second-brain/wiki/concepts/reference-platforms.md` (каталог референсов по типам)
-- Component reuse discipline: `Projects/second-brain/wiki/concepts/component-reuse-discipline.md` (actual list существующих компонентов)
+- Shared components: `Projects/<your-dashboard>/wwwroot/static/components/`
+- Грэп: `grep -rn "render<Entity>\|<entity>.*compact\|<entities>.map" Projects/<your-dashboard>/wwwroot/static/components/ Projects/<your-dashboard>/wwwroot/`
+- Дизайн-система: `Projects/<your-vault>/wiki/concepts/html-report-design-system.md` (Inter, max-width, нумерованные секции, карточки)
+- Reference catalog: `Projects/<your-vault>/wiki/concepts/reference-platforms.md` (каталог референсов по типам)
+- Component reuse discipline: `Projects/<your-vault>/wiki/concepts/component-reuse-discipline.md` (actual list существующих компонентов)
 - Активные UI-проекты:
-  - `report` — MFO Dashboard (`Projects/report/dashboard/wwwroot/`), порт `localhost:5000`. Компоненты в `wwwroot/static/components/`.
-  - `geo-ai-advisory` — лендинги
+  - `report` — MFO Dashboard (`Projects/<your-dashboard>/wwwroot/`), порт `localhost:5000`. Компоненты в `wwwroot/static/components/`.
+  - `<your-advisory>` — лендинги
   - `content-machine` — статьи
-  - Кабинеты партнёров — `Projects/report/dashboard/wwwroot/cabinet.html`, `showcase.html`
+  - Кабинеты партнёров — `Projects/<your-dashboard>/wwwroot/cabinet.html`, `showcase.html`
 - Компонентная разработка (HARD rule):
   - НЕ копировать функции/селекторы между файлами
   - Если функция нужна на >=2 страницах — `dashboard/wwwroot/static/components/<name>.js`

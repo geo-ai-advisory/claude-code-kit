@@ -57,7 +57,7 @@ inputs: [<целевые страницы, секции>]
 
 **Замени плейсхолдеры на свой стек:**
 
-- Vault path: `<например: Projects/second-brain/ / docs/wiki/>`
+- Vault path: `<например: Projects/<your-vault>/ / docs/wiki/>`
 - Templates folder: `<например: <vault>/templates/>`
 - Vault tool MCP: `<например: mcp__obsidian__* (cyanheads) / нет (использовать Write напрямую)>`
 - Frontmatter convention: `<какие поля обязательны — type, tags, created, updated, recency, confidence>`
@@ -65,10 +65,10 @@ inputs: [<целевые страницы, секции>]
 
 ### Пример заполненного контекста (для понимания формата)
 
-Один из пользователей kit работал с Obsidian vault для B-project, его контекст выглядел так:
+Один из пользователей kit работал с Obsidian vault для <your-workspace>, его контекст выглядел так:
 
-- Vault: `Projects/second-brain/`
-- Templates: `Projects/second-brain/templates/` (concept, decision, partner, person, project, question, reference templates)
+- Vault: `Projects/<your-vault>/`
+- Templates: `Projects/<your-vault>/templates/` (concept, decision, partner, person, project, question, reference templates)
 - Tool MCP: `mcp__obsidian__*` (cyanheads) — patch_section, set_frontmatter, append, update_note
 - Frontmatter convention:
   - Обязательные: `type` (concept/decision/partner/person/project/question/reference), `created`, `updated`, `recency`, `confidence` (high/medium/low)

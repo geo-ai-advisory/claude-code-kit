@@ -261,19 +261,19 @@ next: <main-session action — либо коммит, либо что фикси
 
 Один из пользователей kit работал с MFO Dashboard (.NET 8 + vanilla JS), его контекст выглядел так:
 
-- Локальный запуск: `cd Projects/report/dashboard && dotnet run`
+- Локальный запуск: `cd Projects/<your-reports>/dashboard && dotnet run`
 - Порт: `localhost:5000` (не 5057)
-- User-facing страницы: `Projects/report/dashboard/wwwroot/*.html`
+- User-facing страницы: `Projects/<your-dashboard>/wwwroot/*.html`
   - `cabinet.html` — основной кабинет партнёра
-  - `showcase.html` — настройка витрины МФО (A/B эксперименты)
+  - `showcase.html` — настройка витрины <industry> (A/B эксперименты)
   - `compare.html` — сравнение партнёров/периодов
   - `index.html` — главная dashboard
-- Пользователи: 4 партнёра МФО (Локо-Банк, Хиппо, Пампаду, МФО Инсап) — реальные бизнес-пользователи, не разработчики. Ежедневное использование. WCAG 2.2 AA обязателен.
+- Пользователи: 4 партнёра <industry> (Локо-Банк, <Partner B>, <Partner C>, <Partner D>) — реальные бизнес-пользователи, не разработчики. Ежедневное использование. WCAG 2.2 AA обязателен.
 - `<html lang="ru">`
 - Браузер: `mcp__playwright__*` + `mcp__Claude_Preview__*` (preview для статичных проверок)
 - Команды для проверки:
   ```bash
-  cd Projects/report/dashboard && dotnet run &
+  cd Projects/<your-reports>/dashboard && dotnet run &
   # ждать http://localhost:5000
   mcp__playwright__browser_navigate http://localhost:5000/cabinet.html
   ```

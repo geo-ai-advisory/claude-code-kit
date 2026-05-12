@@ -67,12 +67,12 @@ inputs: [<paths>, <pattern>]
 Один из пользователей kit работал с MFO Dashboard + множеством проектов, его контекст выглядел так:
 
 - Основные пути:
-  - `Projects/report/dashboard/**/*.cs` (.NET backend, Endpoints/*, Services/*, Models/*)
-  - `Projects/report/dashboard/wwwroot/**/*.{js,html,css}` (vanilla JS frontend)
-  - `Projects/report/journals/**/*.md` (sessions)
-  - `Projects/second-brain/wiki/**/*.md` (vault)
+  - `Projects/<your-dashboard>/**/*.cs` (.NET backend, Endpoints/*, Services/*, Models/*)
+  - `Projects/<your-dashboard>/wwwroot/**/*.{js,html,css}` (vanilla JS frontend)
+  - `Projects/<your-reports>/journals/**/*.md` (sessions)
+  - `Projects/<your-vault>/wiki/**/*.md` (vault)
 - Журналы: `Projects/<project-name>/journals/<YYYY-MM-DD>-<slug>/`
 - Конкретные file size watchouts:
-  - `Projects/report/dashboard/wwwroot/static/app.js` — может быть > 1000 строк
-  - `Projects/report/dashboard/Endpoints/StatsEndpoints.cs` — > 500 строк
-  - `Projects/second-brain/log.md` — растёт неограниченно (сессии)
+  - `Projects/<your-dashboard>/wwwroot/static/app.js` — может быть > 1000 строк
+  - `Projects/<your-dashboard>/Endpoints/StatsEndpoints.cs` — > 500 строк
+  - `Projects/<your-vault>/log.md` — растёт неограниченно (сессии)

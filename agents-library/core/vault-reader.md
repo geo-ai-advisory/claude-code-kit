@@ -56,21 +56,21 @@ inputs: [<тема, главная страница, depth>]
 
 **Замени плейсхолдеры на свой стек:**
 
-- Vault path: `<например: Projects/second-brain/ / docs/wiki/>`
+- Vault path: `<например: Projects/<your-vault>/ / docs/wiki/>`
 - Vault tool: `<например: Obsidian + obsidian-graph + obsidian MCP / Foam / Logseq / просто markdown>`
 - Wiki structure: `<например: wiki/concepts/, wiki/partners/, wiki/people/, wiki/projects/, wiki/decisions/>`
 - Recency staleness threshold: `<например: 30 дней без update = stale>`
 
 ### Пример заполненного контекста (для понимания формата)
 
-Один из пользователей kit работал с Obsidian vault для B-project, его контекст выглядел так:
+Один из пользователей kit работал с Obsidian vault для <your-workspace>, его контекст выглядел так:
 
-- Vault: `Projects/second-brain/`
+- Vault: `Projects/<your-vault>/`
 - Tool: Obsidian + `mcp__obsidian-graph__*` (aaronsb fork) + `mcp__obsidian__*` (cyanheads)
 - Wiki structure:
   - `wiki/concepts/` — стабильные знания (html-report-design-system, design-balance, ...)
   - `wiki/partners/` — карточки партнёров (loko-bank, hippo, pampadu, mfo-insap)
-  - `wiki/people/` — карточки команды Insapp
+  - `wiki/people/` — карточки команды <YourCompany>
   - `wiki/projects/` — карточки активных проектов
   - `wiki/decisions/` — закреплённые архитектурные/продуктовые решения
   - `wiki/synthesis/` — еженедельные дайджесты

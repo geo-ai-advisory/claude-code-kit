@@ -182,7 +182,7 @@ next: <одна строка>
 
 **Замени плейсхолдеры на свой стек:**
 
-- Vault path: `<например: Projects/second-brain/ / docs/wiki/ / ~/notes/>`
+- Vault path: `<например: Projects/<your-vault>/ / docs/wiki/ / ~/notes/>`
 - Vault tool: `<например: Obsidian с obsidian-graph + obsidian MCP / Foam / Logseq / просто markdown>`
 - Log file location: `<например: <vault>/log.md / journal.md>`
 - Working memory file: `<например: <vault>/CRITICAL_FACTS.md>`
@@ -193,19 +193,19 @@ next: <одна строка>
 
 ### Пример заполненного контекста (для понимания формата)
 
-Один из пользователей kit работал с Obsidian vault для B-project, его контекст выглядел так:
+Один из пользователей kit работал с Obsidian vault для <your-workspace>, его контекст выглядел так:
 
-- Vault: `Projects/second-brain/`
+- Vault: `Projects/<your-vault>/`
 - Vault tool: Obsidian + `mcp__obsidian-graph__*` (aaronsb) + `mcp__obsidian__*` (cyanheads)
-- Log: `Projects/second-brain/log.md` (формат: `## [YYYY-MM-DD HH:MM] auto | session <id>` + 3-5 строк)
-- Working: `Projects/second-brain/CRITICAL_FACTS.md`
-- Concepts: `Projects/second-brain/wiki/concepts/` (примеры существующих страниц: html-report-design-system, design-balance, reference-platforms, showcase-anchor-position, ab-experiment-product-thinking, memory-tier-pattern)
-- Decisions: `Projects/second-brain/wiki/decisions/`
+- Log: `Projects/<your-vault>/log.md` (формат: `## [YYYY-MM-DD HH:MM] auto | session <id>` + 3-5 строк)
+- Working: `Projects/<your-vault>/CRITICAL_FACTS.md`
+- Concepts: `Projects/<your-vault>/wiki/concepts/` (примеры существующих страниц: html-report-design-system, design-balance, reference-platforms, showcase-anchor-position, ab-experiment-product-thinking, memory-tier-pattern)
+- Decisions: `Projects/<your-vault>/wiki/decisions/`
 - Stop hook: `~/.claude/hooks/session-auto-summary.py` (auto Working→Episodic)
 - Конкретные сущности vault:
-  - 4 партнёра МФО (Локо-Банк, Хиппо, Пампаду, МФО Инсап) — карточки в `wiki/partners/{loko-bank,hippo,pampadu,mfo-insap}.md`
-  - Команда Insapp (CEO, COO, CTO, Tech-Lead, QA-Lead, PM) — карточки в `wiki/people/`
+  - 4 партнёра <industry> (Локо-Банк, <Partner B>, <Partner C>, <Partner D>) — карточки в `wiki/partners/{loko-bank,hippo,pampadu,mfo-insap}.md`
+  - Команда <YourCompany> (CEO, COO, CTO, Tech-Lead, QA-Lead, PM) — карточки в `wiki/people/`
   - PartnerId UUIDs — в CRITICAL_FACTS, не дублировать в concepts
   - Активные проекты: report (MFO Dashboard), product-team, sverki, legal, hh, content-machine
 - Стиль: русский, ASCII-дефис `-`, кратко
-- Operating manual vault: `Projects/second-brain/_CLAUDE.md`
+- Operating manual vault: `Projects/<your-vault>/_CLAUDE.md`

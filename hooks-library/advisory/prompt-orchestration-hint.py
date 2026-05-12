@@ -36,8 +36,8 @@ rules = [
     # Memory consolidation
     (r'(memory.consolidat|закрепи.факт|прокачай.vault|консолидац.*vault|memory.tier)', 'memory-consolidator'),
     # Существующие
-    (r'(спарси|парс|резюме|hh\.ru|/hh\b)', 'candidate-resume-reader'),
-    (r'(<your-db>|выдач|статус\s*305|<report-skill>|/mfo-)', 'mfo-db-researcher'),
+    (r'(спарси|парс|резюме|hh\.ru|/hh\b)', 'hh-resume-reader'),
+    (r'(<your-db>|выдач|статус\s*305|/report-mfo|/mfo-)', 'mfo-db-researcher'),
     (r'(vault|wiki/|second-brain|обнови.*стран)', 'vault-writer/vault-reader'),
     (r'(/gitlab_|gitlab.*репо)', 'gitlab-explorer'),
     (r'(прочитай.*стат|websearch|best\s*practic)', 'web-researcher'),

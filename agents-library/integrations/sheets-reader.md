@@ -62,12 +62,12 @@ inputs: [<file_id>, <sheets>, <ranges>]
 
 ### Пример заполненного контекста (для понимания формата)
 
-Один из пользователей kit работал с Google Workspace для трекинга бэклога / сверки МФО / реестра договоров, его контекст выглядел так:
+Один из пользователей kit работал с Google Workspace для трекинга бэклога / сверки <industry> / реестра договоров, его контекст выглядел так:
 
 - Google Drive MCP: `@piotr-agier/google-drive-mcp v1.7.2` (полный CRUD, не только read)
 - Часто используемые Sheet IDs:
-  - Backlog: `1CxVdqu14HSO1t7Ohyz-0wBxoQ2mTiHt1-upjECe8P3A`
-  - Реестр договоров МФО: `1V0Af3oExLlCk0f008p2dJbBq61UMs3oIpwx02GLAKEY`
+  - Backlog: `<your-backlog-sheet-id>`
+  - Реестр договоров МФО: `<your-contracts-sheet-id>`
 - Правила работы с Sheets (HARD из CLAUDE.md проекта):
   - После `gsheets_batch_update` — ОБЯЗАТЕЛЬНО `gsheets_read` ключевых ячеек и сверка
   - После записи диапазона — проверить что хвост не содержит старых данных (через `gsheets_delete_rows` явно чистить)

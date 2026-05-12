@@ -58,22 +58,22 @@ inputs: [<files>, <urls>, <numbers>]
 **Замени плейсхолдеры на свой стек:**
 
 - Источник истины для цифр (DB / API / file): `<например: SQL Server через mcp__<db>__query / PostgreSQL через psql / CSV file / API endpoint>`
-- DB MCP tool (если есть): `<например: mcp__insapp-db__query / mcp__postgres__query / нет (только curl)>`
-- Vault path для frontmatter check: `<например: Projects/second-brain/ / docs/wiki/>`
+- DB MCP tool (если есть): `<например: mcp__<your-db>__query / mcp__postgres__query / нет (только curl)>`
+- Vault path для frontmatter check: `<например: Projects/<your-vault>/ / docs/wiki/>`
 - Конкретные public URLs которые часто проверяешь: `<например: dashboard-prod.company.com / github.io page / S3 bucket>`
 
 ### Пример заполненного контекста (для понимания формата)
 
 Один из пользователей kit работал с MFO Dashboard + Obsidian vault, его контекст выглядел так:
 
-- Источник истины: SQL Server prod (insapp-db), доступ через `mcp__insapp-db__query` (read-only)
-- DB MCP: `mcp__insapp-db__query` (обязательно с LIMIT)
-- Vault: `Projects/second-brain/`
+- Источник истины: SQL Server prod (<your-db>), доступ через `mcp__<your-db>__query` (read-only)
+- DB MCP: `mcp__<your-db>__query` (обязательно с LIMIT)
+- Vault: `Projects/<your-vault>/`
 - Часто проверяемые URLs:
-  - `test-dashboard.insapp.pro` (test dashboard CI/CD)
-  - `engwatch.github.io/*` (HTML отчёты через `/html-push`)
+  - `<your-prod-host>` (test dashboard CI/CD)
+  - `<your-username>.github.io/*` (HTML отчёты через `/html-push`)
   - Telemost ссылки (создаваемые встречи)
 - Дополнительные правила:
-  - Tool `mcp__insapp-db__query` обязательно с LIMIT
+  - Tool `mcp__<your-db>__query` обязательно с LIMIT
   - После `/html-push` обязателен public browser-check (curl + grep ключевой цифры)
   - Tool: `mcp__obsidian__obsidian_get_note` для vault frontmatter

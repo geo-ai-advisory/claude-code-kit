@@ -63,7 +63,7 @@ inputs: [<filter>, <queue>, <users>]
 
 ### Пример заполненного контекста (для понимания формата)
 
-Один из пользователей kit работал с Yandex Tracker для Insapp, его контекст выглядел так:
+Один из пользователей kit работал с Yandex Tracker для <YourCompany>, его контекст выглядел так:
 
 - Tracker MCP: внутренний `mcp__tracker__*` (`list_issues`, `search_issues`, `list_users`, `get_issue`, `resolve_user`, `list_queues`, `list_transitions`, `get_team_stats`, `get_employee_stats`, `get_queue_stats`, `add_comment`, `add_worklog`, `move_issue`, `update_issue`, `create_issue`)
 - Основные очереди: MFO (основная очередь МФО-задач), FRONT (фронтенд), BACK (бэкенд), OPS, и др.

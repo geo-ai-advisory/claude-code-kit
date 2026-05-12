@@ -54,9 +54,9 @@ model: haiku
 
 ### Пример заполненного контекста (для понимания формата)
 
-Один из пользователей kit работал с B-project (12+ Projects/), его контекст выглядел так:
+Один из пользователей kit работал с <your-workspace> (12+ Projects/), его контекст выглядел так:
 
-- Структура: `Projects/<project-name>/journals/<YYYY-MM-DD>-<slug>/log.md` (project-level) + `journals/<YYYY-MM-DD>-<slug>/log.md` (B-project root level)
+- Структура: `Projects/<project-name>/journals/<YYYY-MM-DD>-<slug>/log.md` (project-level) + `journals/<YYYY-MM-DD>-<slug>/log.md` (<your-workspace> root level)
 - Glob: `**/journals/**/log.md` + `**/journals/**/*.md`
 - Активные projects: report, product-team, sverki, legal, hh, content-machine, second-brain, claudecode-handoff, self-learning-system, для-партнёров, call-center, sheet-command, puremail, content-machine, hh-dm-pm, vozakov-site
 - Дополнительный риск: `journals/` immutable — не редактировать существующие, только читать

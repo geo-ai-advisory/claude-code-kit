@@ -63,7 +63,7 @@ inputs: [<projects>, <period>, <authors>]
 
 ### Пример заполненного контекста (для понимания формата)
 
-Один из пользователей kit работал с Insapp GitLab (19 проектов, 11 разработчиков), его контекст выглядел так:
+Один из пользователей kit работал с <YourCompany> GitLab (19 проектов, 11 разработчиков), его контекст выглядел так:
 
 - GitLab MCP: `@zereight/mcp-gitlab v2.0.30`, read-only токен
 - Список проектов: `~/.claude/projects/.../memory/project_gitlab_repos.md` (19 проектов)

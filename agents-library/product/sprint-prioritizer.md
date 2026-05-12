@@ -204,23 +204,23 @@ next: <одна фраза — например "согласовать с tech-
 - Команда (sprint owner и др. роли): `<кто tech-lead, кто PM, кто QA, кто принимает финальное решение>`
 - Активные продукты / direction: `<список проектов в работе, чтобы Reach/Impact считать осмысленно>`
 - Реальные клиенты / партнёры (Reach base): `<список клиентов с примерными числами трафика>`
-- Vault path для sprint-menu: `<например: Projects/second-brain/wiki/synthesis/>`
+- Vault path для sprint-menu: `<например: Projects/<your-vault>/wiki/synthesis/>`
 - MCP/CLI для чтения backlog: `<например: mcp__gdrive__gsheets_read / mcp__jira / mcp__linear / Read>`
 
 ### Пример заполненного контекста (для понимания формата)
 
-Один из пользователей kit работал с Insapp (InsurTech/FinTech, 4 партнёра МФО), его контекст выглядел так:
+Один из пользователей kit работал с <YourCompany> (InsurTech/FinTech, 4 партнёра <industry>), его контекст выглядел так:
 
-- Backlog: Google Sheet `1CxVdqu14HSO1t7Ohyz-0wBxoQ2mTiHt1-upjECe8P3A`
+- Backlog: Google Sheet `<your-backlog-sheet-id>`
 - Issue tracker: Yandex Tracker (multiple queues), MCP `mcp__tracker__*`
 - Команда: CEO (final approve), COO, CTO, Tech-Lead (sprint owner), QA-Lead, PM
 - Активные продукты:
-  - A/B витрины (multi-armed bandit для МФО офферов)
+  - A/B витрины (multi-armed bandit для <industry> офферов)
   - Кабинеты партнёров (admin/user roles)
   - MFO Dashboard
   - Отчёты партнёрам
-- Партнёры (Reach base): Локо-Банк, Хиппо, Пампаду, МФО Инсап (~50K юзеров/нед в сумме)
-- Vault: `Projects/second-brain/wiki/synthesis/`
+- Партнёры (Reach base): Локо-Банк, <Partner B>, <Partner C>, <Partner D> (~50K юзеров/нед в сумме)
+- Vault: `Projects/<your-vault>/wiki/synthesis/`
 - MCP для backlog: `mcp__gdrive__gsheets_read`, `mcp__gdrive__gsheets_batch_update`
 
 Конкретные примеры RICE-расчётов:

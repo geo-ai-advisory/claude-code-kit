@@ -159,7 +159,7 @@ blocker: Security: tenant_id не фильтруется
 - Auth: cookie-based, `AuthEndpoints.cs` + `UserStore.cs`, роли owner / admin / partner-user
 - Команда сборки: `dotnet build`
 - Технические инварианты:
-  - `ProductTypeId = 5` — основной продукт (МФО)
+  - `ProductTypeId = 5` — основной продукт (<industry>)
   - `ChannelTypeId = 2` — канал «виджет»
   - `Applications.Created` — `datetimeoffset` с `+03:00` (Москва). Фильтр ТОЛЬКО через полуоткрытые интервалы `>= @from AND < @to`. Любой `CAST(Created AS DATE) = @date` или `DATEPART(...)` ломает индекс — full scan на миллионах строк = прод down.
   - `PartnerId` изолирован: каждый partner-user видит ТОЛЬКО свой `PartnerId`. Утечка между партнёрами-конкурентами = катастрофа. Эталон фильтра — `PartnerMfoEndpoints.cs`.

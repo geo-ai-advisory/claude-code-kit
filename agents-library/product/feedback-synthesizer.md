@@ -177,23 +177,23 @@ next: передать sprint-prioritizer для RICE
   - Issue tracker: `<например: Yandex Tracker через mcp__tracker__* / Jira / Linear / GitHub Issues>`
   - Support tickets: `<например: Usedesk через mcp__usedesk__* / Zendesk / Intercom / нет>`
 - Конкретные клиенты / партнёры (Reach base): `<список реальных клиентов с UUIDs / IDs>`
-- Vault / docs path для synthesis файлов: `<например: Projects/second-brain/wiki/synthesis/ / docs/synthesis/>`
+- Vault / docs path для synthesis файлов: `<например: Projects/<your-vault>/wiki/synthesis/ / docs/synthesis/>`
 - Команда defrosting feedback: `<кто часто слышит первой, кто берёт сроки на bug fixes, кто проверяет починку>`
 - MCP/CLI tools для сбора данных: `<список MCP инструментов или CLI команд>`
 
 ### Пример заполненного контекста (для понимания формата)
 
-Один из пользователей kit работал с InsurTech B2B (4 партнёра МФО), его контекст выглядел так:
+Один из пользователей kit работал с InsurTech B2B (4 партнёра <industry>), его контекст выглядел так:
 
 - Каналы:
-  - Telegram (`mcp__telegram__get_summary`, `mcp__telegram__get_mentions`, `mcp__telegram__search_chat`, `mcp__telegram__get_insapp_summary`)
+  - Telegram (`mcp__telegram__get_summary`, `mcp__telegram__get_mentions`, `mcp__telegram__search_chat`, `mcp__telegram__get_<your-company>_summary`)
   - Yandex Tracker (`mcp__tracker__list_issues`, `mcp__tracker__search_issues`)
-  - Usedesk (`mcp__insapp-usedesk__usedesk_tickets_list`)
+  - Usedesk (`mcp__<your-company>-usedesk__usedesk_tickets_list`)
 - Партнёры:
-  - Локо-Банк (PartnerId 4e96325d-0734-4989-bddd-eebf459d132e)
-  - Хиппо (PartnerId 8985c811-6de6-4fcb-96aa-e1d75adfb9a5)
-  - Пампаду (PartnerId 2e1b192e-0126-4afd-b392-6e907045d225)
-  - МФО Инсап (PartnerId a5842f98-c8a8-4a91-9dec-7cd27e734c00)
-- Vault: `Projects/second-brain/wiki/synthesis/`
+  - Локо-Банк (PartnerId <PARTNER_A_UUID>)
+  - <Partner B> (PartnerId <PARTNER_B_UUID>)
+  - <Partner C> (PartnerId <PARTNER_C_UUID>)
+  - <Partner D> (PartnerId <PARTNER_D_UUID>)
+- Vault: `Projects/<your-vault>/wiki/synthesis/`
 - Команда: PM (часто слышит первой), Tech-Lead (берёт сроки на bug fixes), QA-Lead (проверяет починку)
 - Telegram чаты: основной insap-чат, личные DM partner leads

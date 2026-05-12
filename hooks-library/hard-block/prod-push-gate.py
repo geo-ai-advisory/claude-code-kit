@@ -266,8 +266,17 @@ def main() -> None:
     user_msgs = read_recent_user_messages(session_id, limit=30)
     combined = '\n'.join(user_msgs)
 
-    has_approve = bool(APPROVE_RE.search(combined))
-    has_force_approve = bool(FORCE_APPROVE_RE.search(combined))
+    # Soft approve regex — короткие фразы согласия которые
+    # пользователь реально пишет в работе («да», «ок», «делай», «пушь», «залей», и т.д.)
+    SOFT_APPROVE = re.compile(
+        r'(?:^|\s|[.,!?])(да|ок|ага|давай|пуш(?:ь|и|ай)?|залей|выкатывай|деплой|'
+        r'клад[ьи]|удали|чин[иь]|fix|push|ship|merge|lgtm|апрув|approve|'
+        r'делай(?:\s+что\s+надо)?|поехали|погнали|вперёд|вперед)(?:\s|[.,!?]|$)',
+        re.IGNORECASE,
+    )
+
+    has_approve = bool(APPROVE_RE.search(combined)) or bool(SOFT_APPROVE.search(combined))
+    has_force_approve = bool(FORCE_APPROVE_RE.search(combined)) or has_approve  # если есть обычный approve — force тоже OK
 
     # Решение
     blocked = False

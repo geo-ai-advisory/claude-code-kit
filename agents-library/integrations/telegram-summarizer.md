@@ -62,12 +62,12 @@ inputs: [<period>, <chats>, <topic>]
 
 ### Пример заполненного контекста (для понимания формата)
 
-Один из пользователей kit работал с Insapp Telegram (внутренние чаты), его контекст выглядел так:
+Один из пользователей kit работал с <YourCompany> Telegram (внутренние чаты), его контекст выглядел так:
 
-- Telegram MCP: внутренний `mcp__telegram__*` (with `get_daily_summary`, `get_insapp_summary`, `get_mentions`, `search_chat`, `send_message`)
+- Telegram MCP: внутренний `mcp__telegram__*` (with `get_daily_summary`, `get_<your-company>_summary`, `get_mentions`, `search_chat`, `send_message`)
 - Целевые чаты:
   - Основной insap-чат (внутренняя команда)
-  - Личные DM партнёров (Локо, Хиппо, Пампаду, МФО Инсап)
-  - Канал @danielspe_chanel (внешний, не для агрегации)
-- Кастомный метод: `get_insapp_summary` — агрегат специфично по целевым insap-чатам
-- Дополнительный риск: НЕ публиковать в @danielspe_chanel из telegram-summarizer — это отдельный flow с content-machine
+  - Личные DM партнёров (Локо, <Partner B>, <Partner C>, <Partner D>)
+  - Канал @your-channel (внешний, не для агрегации)
+- Кастомный метод: `get_<your-company>_summary` — агрегат специфично по целевым insap-чатам
+- Дополнительный риск: НЕ публиковать в @your-channel из telegram-summarizer — это отдельный flow с content-machine
