@@ -115,7 +115,7 @@ Hook `selector-duplication-detector.py` ловит копипаст-функци
 
 Когда пилится фича (новая или фикс) — **тестировать на всех слоях АВТОНОМНО**, в фоне, без вопросов пользователю. Пользователь видит только финальное «готово к деплою» после PASS на всех слоях. До этого момента — никаких сообщений о готовности.
 
-### Обязательные слои тестирования (все 4)
+### Обязательные слои тестирования (все 5)
 
 1. **Backend layer** (если затронут backend код):
    - `curl` на endpoint с разными payload (empty, valid, edge: null/0/expired auth/wrong role)
@@ -132,11 +132,32 @@ Hook `selector-duplication-detector.py` ловит копипаст-функци
    - `ui-quality-reviewer` этап 7 (live behavior + edge data + states)
    - `qa-scenario-tester` — 5-step functional test против acceptance criteria
 
-4. **Cross-layer verification (САМОЕ ГЛАВНОЕ — катастрофа 12.05 произошла именно тут):**
+4. **Cross-layer verification (data consistency):**
    - **Вытащить N значений из UI** через `browser_evaluate` (например `[...document.querySelectorAll('.cell')].map(c => +c.textContent)`)
    - **Вытащить те же N значений из backend API** через `curl /endpoint | jq`
    - **Сравнить element-by-element** — должны совпадать с точностью до округления
    - **FAIL** если расходятся → root cause анализ (backend missing field? frontend fallback на грубый calc? cache stale?)
+
+5. **Logical & Math validation (САМЫЙ ВАЖНЫЙ слой — добавлен 13.05.2026 после катастрофы «pill = max EPC а не EPC на позиции»):**
+
+   Cross-layer ловит расхождение values. Logical validation ловит когда values верные но **смысл вводит в заблуждение**.
+
+   - **Math consistency** — формулы внутри displayed чисел (CR = issued/transitions, Sum по rows = total на header, percent total = 100%)
+   - **Contextual correctness** — число берётся из правильного контекста. Если pill показывает «оффер X на позиции 7 → 95₽», то 95₽ должно быть EPC оффера X **именно на позиции 7**, а не max EPC по всем позициям
+   - **Real-world correspondence** — UI ★ базовый === backend currentBase, displayed «лучший» === реально лучший по выбранной метрике
+   - **Cross-section narrative** — если entity встречается в N местах (heatmap, hypothesis, table) — они рассказывают **одну историю**, не противоречат
+   - **Math sanity** — Min ≤ Avg ≤ Max, Total = sum of parts, % sum = 100±0.5%
+
+   Реальный пример (13.05) который Шаг 7 ловит:
+   ```
+   Hypothesis pill оффер X = 95₽
+   Source: state.offerBestEpc (max EPC across positions)
+   Actual: state.offerStats.X.byPosition[7] = 60₽
+   Pill BERR LEAD USER астрой — он думает X на позиции 7 даёт 95₽ (max), реально 60₽
+   FIX: pill должен брать position-specific EPC, не max
+   ```
+
+   Делегируется через `qa-scenario-tester` Шаг 7 (logical & math validation).
 
 ### Конкретный кейс который должен ловиться
 

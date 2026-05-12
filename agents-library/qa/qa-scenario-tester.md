@@ -206,6 +206,132 @@ diff = огромные расхождения между cells и API → ROOT 
 2. Fix на правильном слое (не latch'и в frontend если backend сломан)
 3. Re-test всех 6 шагов
 
+#### Шаг 7 — Logical & Math validation (КРИТИЧНО, добавлено после катастрофы 13.05 «pill показывает max EPC а не EPC на текущей позиции»)
+
+**Цель:** убедиться что числа не только **совпадают между слоями**, но и **отражают реальную действительность** в правильном контексте.
+
+Cross-layer (Шаг 6) ловит: API value ≠ UI value.
+Logical validation (Шаг 7) ловит: UI value корректный **по значению**, но в **неправильном контексте/значении/смысле**.
+
+### Что проверять
+
+#### 7.1 — Math consistency (формулы внутри отображаемых чисел)
+
+Для каждого compound number на UI вычислить вручную из source data:
+
+```js
+// Например на странице эксперимента:
+const variants = state.variants;
+
+// Сумма transitions по variants === total на header?
+const sumTransitions = variants.reduce((s, v) => s + v.transitions, 0);
+const headerTotal = parseFloat(document.querySelector('[data-kpi="total-clicks"]').textContent);
+assert(Math.abs(sumTransitions - headerTotal) < 1);
+
+// CR = issued / transitions для каждого variant?
+variants.forEach(v => {
+  const expected = v.transitions > 0 ? v.issued / v.transitions : 0;
+  const displayed = parseFloat(v.crCell.textContent.replace('%','')) / 100;
+  assert(Math.abs(expected - displayed) < 0.001);
+});
+
+// EPC = revenue / transitions?
+// Lift % = (variant.epc - base.epc) / base.epc * 100?
+```
+
+**FAIL если** любая формула не сходится.
+
+#### 7.2 — Contextual correctness (число в нужном контексте, не максимум/среднее по всему)
+
+**Главная категория багов которая ловится только этим шагом.**
+
+Спросить для каждого выделенного числа:
+- «Это число — про что конкретно?»
+- «Соответствует ли источник число тому что user видит как контекст?»
+
+Реальный пример (13.05.2026 catch):
+- Hypothesis pill показывал `offerBestEpc` (max EPC оффера за все позиции)
+- НО оффер фактически стоит в hypothesis на позиции где EPC меньше
+- User видит «оффер X → 95₽», но реально на этой позиции он даёт «60₽»
+- Технически данные верные (max EPC = 95), но **контекст вводит в заблуждение**
+
+Проверка:
+```js
+// Hypothesis pill для каждого оффера
+state.hypothesis.offers.forEach((offerInPosition, idx) => {
+  const displayedEpc = parseFloat(pills[idx].textContent.replace('₽',''));
+  // Какой EPC оффер даёт ИМЕННО на этой позиции?
+  const actualEpcAtPosition = state.offerStats.byOffer[offerInPosition.id]?.byPosition[idx + 1];
+  assert.equal(displayedEpc, actualEpcAtPosition,
+    `Pill для оффера ${offerInPosition.name} на позиции ${idx+1} показывает ${displayedEpc}₽, но фактический EPC на этой позиции = ${actualEpcAtPosition}₽`);
+});
+```
+
+**FAIL если** displayed value берётся не из контекстуального источника.
+
+#### 7.3 — Real-world correspondence (данные == реальность)
+
+Проверить что отображаемые цифры **соответствуют реальной бизнес-логике**:
+
+- Если показано «лучший вариант» — оффер реально лучший по выбранной метрике?
+- Если показано «promoted as base» — этот вариант реально применён как control?
+- Если показано «выдач 14, EPC 95₽» — `EPC = revenue / transitions = 95₽` при reasonable revenue?
+
+```bash
+# Например: cross-check с реальным backend state
+curl /api/experiments/<id>/state | jq '.currentBase'
+# vs UI: какой вариант помечен как ★ базовый?
+# должен совпадать с currentBase из API
+```
+
+#### 7.4 — Cross-section narrative consistency
+
+Если одна и та же entity (оффер / эксперимент / метрика) встречается в N местах на странице — **они должны рассказывать одну историю**.
+
+Пример:
+- Heatmap row для оффера X показывает: позиции 1-3 зелёные (хорошо)
+- Hypothesis pill для X показывает: позиция 7 (среди худших)
+- **CONFLICT:** одна часть UI говорит «лучше на топ», другая — «лучше на низе». User в недоумении.
+
+Проверка:
+```js
+const offerX = '<id>';
+const heatmapBestForX = state.heatmap.byOffer[offerX].positions
+  .reduce((best, p) => p.epc > best.epc ? p : best);
+const hypothesisPositionForX = state.hypothesis.offers.findIndex(o => o.id === offerX) + 1;
+
+if (heatmapBestForX.position !== hypothesisPositionForX) {
+  // Это не обязательно FAIL — алгоритм может намеренно ставить оффер не на best
+  // НО UI должен это **объяснить** (annotation/tooltip)
+  // FAIL: если объяснения нет → user disagree
+  assert(annotationPresent, `Conflict heatmap ${heatmapBestForX.position} vs hypothesis ${hypothesisPositionForX} без annotation`);
+}
+```
+
+#### 7.5 — Math sanity (rough estimates)
+
+Быстрые ratio-checks:
+- Sum percentages = 100% (±0.5%)?
+- Min ≤ Avg ≤ Max?
+- Total = sum of parts?
+- Time elapsed = end - start?
+
+**FAIL** если sanity нарушена.
+
+### Output FAIL формат
+
+Каждое расхождение — отдельная строка:
+
+```
+FAIL[logical] hypothesis pill оффер «<имя>»:
+  displayed: 95₽
+  source: state.offerBestEpc (max EPC across positions)
+  expected: state.offerStats.<id>.byPosition[<idx>] (EPC at actual displayed position)
+  fix: заменить источник pill на position-specific EPC
+```
+
+Не PASS пока все 5 sub-checks (7.1-7.5) не зелёные.
+
 ### Этап 4 — Anti-patterns catalog (на основе реальных багов 12.05.2026)
 
 Эти 12 anti-patterns ОБЯЗАНЫ быть проверены на каждой dashboard-задаче. Каждый — результат реального бага в prod.
