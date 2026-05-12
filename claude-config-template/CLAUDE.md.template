@@ -123,17 +123,38 @@ Hook `selector-duplication-detector.py` ловит копипаст-функци
 - «выполни регламент», «позови всех агентов», «комплексно реши»
 - мат + UI/UX в одном prompt
 
-**Что ОБЯЗАН сделать сразу при такой жалобе:**
+**Что ОБЯЗАН сделать сразу при такой жалобе (АВТОНОМНО, без approve промежуточных этапов):**
 
-1. **НЕ лезть править файлы**. Edit — ПОСЛЕ pipeline, не в начале.
+1. **НЕ лезть править файлы СРАЗУ**. Edit — после pipeline, не в начале.
 2. **Сначала ответ текстом** (≥200 chars): признать косяк, описать что собираешься сделать
-3. **Task(product-architect)** — re-think зачем этот блок, какое решение пользователь принимает, какая acceptance criteria. Записать в новый brief.
-4. **Task(ui-design-architect)** — re-design composition, mental model, layout, что показывать рядом, какие entity на этом экране, какие functional behavior + invariants
-5. **User approve brief + screen-spec** (явное «ок» / «погнали»)
-6. **Edit** на основе screen-spec — с конкретными размерами/cell/layout
-7. **Task(ui-quality-reviewer)** — live behavior + edge data check (этап 7)
-8. **Task(qa-scenario-tester)** — 5-step functional test против acceptance criteria
-9. **Только после PASS** → claim «готово» + ждать approve на push
+3. **Task(product-architect)** — re-think зачем этот блок, какое решение пользователь принимает, какая acceptance criteria. Brief записан в файл.
+4. **Task(ui-design-architect)** — re-design composition, mental model, layout, entity, functional behavior + invariants. Screen-spec в файле.
+5. **Edit на основе screen-spec** — БЕЗ approve пользователя на brief/screen-spec. Эти файлы — техническая работа агентов, пользователю не нужно их одобрять.
+6. **Task(ui-quality-reviewer)** — live behavior + edge data check (этап 7) АВТОНОМНО
+7. **Task(qa-scenario-tester)** — 5-step functional test против acceptance criteria АВТОНОМНО
+8. Если QA FAIL → починить по списку FAIL → re-run QA. Loop до PASS.
+9. **Только после PASS** → показать пользователю **финальный результат** (скриншот / описание / link) + **запросить approve на push**
+
+### ВАЖНО про approve
+
+- **НЕ спрашивать approve** на: brief, screen-spec, design choices, технические решения внутри pipeline
+- **Спрашивать approve** только на: финальный push в prod, удаление данных, force push, опасные destructive операции
+
+Если пользователь хочет approve на каждый этап — он скажет «согласовывай каждый шаг» / «по шагам». По умолчанию pipeline автономен.
+
+### Anti-pattern спрашивания
+
+- ❌ «Брифу нужен approve?» — нет, это технический документ агента, не product decision
+- ❌ «Делаем screen-spec, ок?» — нет, делай и продолжай
+- ❌ «По брифу всё ок? переходим к Edit?» — нет, это перебивание workflow
+
+### Что показать пользователю в конце
+
+После всего pipeline + QA PASS:
+- Краткое описание что починил (3-5 строк)
+- Скриншот ключевой секции (viewport, не full-page)
+- Локальная ссылка для проверки
+- Вопрос «push в prod?» с одним bullet что именно пойдёт
 
 **АНТИ-ПАТТЕРН** (что НЕ делать):
 - «понял, переписываю» → Edit на 30 строк → push → опять кривое
@@ -154,7 +175,9 @@ Hook `selector-duplication-detector.py` ловит копипаст-функци
 1. **product-architect** через `Task(subagent_type='general-purpose', prompt='следуй ~/.claude/agents/product-architect.md ...')` → brief (что/кому/зачем/метрики/референсы/wording) → отправить пользователю на approve
 2. **ui-design-architect** через `Task(subagent_type='general-purpose', prompt='следуй ~/.claude/agents/ui-design-architect.md ...')` → screen-spec (mental model, layout grid ASCII, компоненты, состояния, responsive, конкретные референсы из reference-platforms.md) → отправить пользователю на approve
 
-Только ПОСЛЕ обоих approve — Edit.
+После того как brief + screen-spec созданы — **сразу переходить к Edit**. НЕ спрашивать у пользователя «ок брифу/спеку?». Это технические артефакты pipeline, не product decision.
+
+Approve пользователя нужен ТОЛЬКО на финальный push в prod (см. секцию выше «Жалоба на качество UI/UX»).
 
 Hook `brief-gate.py` блокирует Edit через `continue:false` если в transcript НЕТ обоих сигналов (brief signal + screen-spec signal). Обход для мелких правок — fix-mode keyword в свежем user prompt («фикс / hotfix / маленьк / 1 строка / без брифа, ок»).
 
