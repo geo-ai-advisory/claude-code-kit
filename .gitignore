@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Build artifacts
+.local-build/
+build/
+DerivedData/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db

@@ -1,0 +1,107 @@
+---
+type: index
+created: 2026-04-29
+updated: 2026-04-29
+---
+
+# Index
+
+Этот файл — entry point vault'а. Всегда читать первым после `CRITICAL_FACTS.md`.
+
+## Каталог по типам
+
+### Projects (см. `wiki/projects/`)
+
+Активные:
+- [[wiki/projects/report]] — Отчёты <industry> + MFO Dashboard
+- [[wiki/projects/<your-advisory>]] — Личная AI-advisory воронка (<your-rate>)
+- [[wiki/projects/hh]] — Поиск кандидатов hh.ru (DM/PM, supply-side)
+- [[wiki/projects/content-machine]] — Кросспостинг 9 площадок
+- [[wiki/projects/sales]] — Продажи MFO-виджета (<sales-partner>)
+- [[wiki/projects/product-team]] — Продуктовая команда <YourCompany> (process v1.1)
+- [[wiki/projects/sverki]] — Сверки <industry> с вендорами
+- [[wiki/projects/legal]] — <your-domain> contracts
+- [[wiki/projects/self-learning-system]] — Система памяти Claude Code
+- [[wiki/projects/console]] — <YourCompany> ARM Dashboard (Angular)
+
+В паузе:
+- [[wiki/projects/puremail]] — Корпоративная почта `insap.tech`
+- [[wiki/projects/call-center]] — AI колл-бот <your-bot>
+- [[wiki/projects/for-partners]] — Публичный репо скиллов
+- [[wiki/projects/vozakov-site]] — Сайт + кабинет партнёра
+
+Инфраструктура / reference:
+- [[wiki/projects/sheet-command]] — Утилиты Google Sheets
+- [[wiki/projects/second-brain]] — Этот vault
+- [[wiki/projects/claudecode-handoff]] — Runbook для коллеги
+
+### Partners (см. `wiki/partners/`)
+
+- [[wiki/partners/loko-bank]] — КБ «<Partner A Bank>» (АО)
+- [[wiki/partners/hippo]] — ООО «ЭМТЕХНОЛОДЖИС» (<Partner B>)
+- [[wiki/partners/pampadu]] — ООО «СТРАХОВЫЕ ПАРТНЕРЫ» (CPA)
+- [[wiki/partners/mfo-insap]] — <Partner D> (внутренний бренд)
+
+### People (см. `wiki/people/`)
+
+Сам Geo:
+- [[wiki/people/geo]] — Мотренко Георгий (Head of Product Growth)
+
+Операционка / лидеры:
+- [[wiki/people/vozakov-nikita]] — CEO
+- [[wiki/people/grozner-gleb]] — COO
+- [[wiki/people/klimov-sergey]] — CTO
+
+Продукт / процесс:
+- [[wiki/people/svistunov-alex]] — Backend, владелец сроков
+- [[wiki/people/gurkin-vasily]] — QA, защита задач
+- [[wiki/people/koltsova-adriana]] — PM/BA Финансы
+
+Разработка:
+- [[wiki/people/listopad-dmitry]], [[wiki/people/khlopov-dmitry]], [[wiki/people/kotov-ilya]], [[wiki/people/damaskin-ivan]], [[wiki/people/tkachenko-pavel]], [[wiki/people/yakovlev-alexander]]
+
+Внешние:
+- [[wiki/people/larin-sasha]] — Партнёр-катализатор продаж
+
+### Concepts (см. `wiki/concepts/`)
+
+Рынок и продукт:
+- [[wiki/concepts/cpa-landscape-2026]] — CPA-ландшафт финансовой вертикали
+- [[wiki/concepts/<your-domain>-segment]] — Retail — valid <your-domain> segment
+- [[wiki/concepts/showcase-anchor-position]] — Якорная позиция витрины
+
+Найм:
+- [[wiki/concepts/hh-dm-pm-criteria]] — Критерии DM/PM на hh.ru
+
+Контент:
+- [[wiki/concepts/geo-channel-style]] — Стиль постов @your-channel
+- [[wiki/concepts/medium-editor-pitfalls]] — Подводные камни Medium
+
+Дизайн / UI:
+- [[wiki/concepts/design-balance]] — Золотая середина в дизайне
+- [[wiki/concepts/html-report-design-system]] — Дизайн-система HTML-отчётов
+- [[wiki/concepts/cursor-preview-self-contained]] — HTML self-contained для Cursor Preview
+- [[wiki/concepts/html-button-states]] — Состояния кнопок default/hover/active
+- [[wiki/concepts/ui-grid-discipline]] — Ровная сетка вёрстки
+
+Автоматизация:
+- [[wiki/concepts/morning-routine]] — Полная автоматизация delivery-менеджера
+
+### Decisions (см. `wiki/decisions/`)
+
+- [[wiki/decisions/2026-03-24-team-process-v11]] — <Tech-Lead> владеет сроками
+- [[wiki/decisions/2026-04-02-finbridge-compensation-loko]] — <vendor> 58000 ₽ компенсации <Partner A>
+
+### References (см. `wiki/references/`)
+
+- [[wiki/references/<your-company>-gitlab-repos]] — 19 проектов на <your-gitlab-host>
+- [[wiki/references/gitlab-dev-aliases]] — git-имена и трекер-логины разработчиков
+- [[wiki/references/<your-company>-claude-skills-repo]] — Двойное зеркало GitLab + GitHub
+- [[wiki/references/skillsmp-marketplace]] — skillsmp.com маркетплейс SKILL.md
+- [[wiki/references/<your-github-user>-github-io]] — Публичные HTML-артефакты (<your-password>)
+
+### Open Questions (см. `wiki/questions/`)
+*(автоматически: только страницы со `status: open`)*
+
+## Последние 10 сессий
+*(подгружается из `log.md` через grep)*

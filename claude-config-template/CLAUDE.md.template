@@ -1,0 +1,185 @@
+# Глобальные правила Claude Code
+
+## Идентичность
+Geo (Georgii <your-name>) - Head of Product Growth, <YourCompany> (InsurTech/FinTech). Цель O-1 виза США. Канал @your-channel. AI-advisory <your-rate>.
+
+## Routing
+В начале каждой задачи определи активный проект:
+1. Slash-команда / скилл (`/report-mfo` -> report).
+2. Явный путь в запросе.
+3. Контекст текущей сессии.
+4. Если неясно - спроси.
+
+Источник истины проекта - `Projects/<x>/CLAUDE.md` (sub-CLAUDE.md, грузится автоматически когда работаешь в этой папке) и `Projects/<x>/CONTEXT.md`.
+
+Если задача уже продолжается в той же сессии и в том же проекте - НЕ пересобирай контекст заново.
+
+## Vault entry-point ритуал
+Перед первым действием в любой нетривиальной сессии <your-workspace>:
+1. Прочитать `Projects/<your-vault>/CRITICAL_FACTS.md`.
+2. Прочитать `Projects/<your-vault>/_index.md`.
+3. `grep '^## \[' Projects/<your-vault>/log.md | head -20` - последние 20 сессий.
+4. Проверить `Projects/<your-vault>/wiki/questions/` на `status: open`.
+5. Только после этого - запрос пользователя и работа.
+
+Подробности vault - `Projects/<your-vault>/_CLAUDE.md`.
+
+## Режимы проекта (fast | thoughtful)
+Хранится в `Projects/<x>/CLAUDE.md` или `Projects/<x>/CONTEXT.md` строкой `mode: fast` / `mode: thoughtful`. По умолчанию `fast`.
+
+- **fast** - короткий путь, без обязательного плана, без WebSearch по умолчанию. Для одношаговых, локальных, operational задач. Для технических правок ОБЯЗАТЕЛЬНО мини-протокол (см. ниже).
+- **thoughtful** - для сложного: исследование, проектирование, рефакторинг. Прочитай контекст, цель, журнал; покажи план; дождись «ок».
+
+Если режим не сохранён - спроси один раз и сохрани в `Projects/<x>/CLAUDE.md`.
+
+## Runtime-рубильники (важнее режима для текущей задачи)
+Если в сообщении есть `Режим: ...` или теги `[быстро][план]` - это рубильники текущей задачи.
+
+- `быстро` - начать сразу, без аналитики/плана. Исключения: рискованные/destructive действия.
+- `аналитика` - сначала разобрать задачу и контекст.
+- `план` - после разбора показать шаги.
+- `согласование` - после плана ждать «ок».
+- `автопилот` - после старта без болтовни до результата, прерываясь только на блокере.
+
+Правила:
+1. Если задан хотя бы один (кроме `быстро`) и не указаны остальные - кратко спроси про пропущенные. Пример: «Принял: план + автопилот. Делаем без аналитики и без отдельного согласования?»
+2. Полный контур `аналитика, план, согласование, автопилот` - одно короткое подтверждение и работа.
+3. Рубильники важнее skill-инструкций: skill задаёт ЧТО, рубильники - КАК.
+4. После каждого этапа закрывай завершённые задачи в task list, не оставляй `in_progress`.
+
+## Мини-протокол для технических задач (даже в fast)
+Любая правка кода, backend/frontend-логики, селекторов, фильтров, API, SQL, рендеринга UI:
+
+1. Понять как работает сейчас (читать код, найти источник данных и точку решения).
+2. Сформулировать гипотезу - в чём причина бага.
+3. Внести правку.
+4. Проверить по сути (вызвать endpoint / открыть UI на конкретном сценарии / sanity-query на цифру). НЕ build/curl/typecheck.
+5. Только после подтверждения - отвечать «готово».
+
+Короткое правило: анализ -> правка -> проверка на реальном сценарии пользователя -> ответ.
+
+## Контракт делегирования
+Если задача требует **>5 fetch / >20 страниц / >2000 items / >5 минут / любой массовый batch** - обязательно делегировать subagent.
+
+Контракт:
+- Subagent пишет полный отчёт в файл (`Projects/<active>/journals/<date>/<role>-N.md` или `wiki/`).
+- В чат возвращает РОВНО 5 строк:
+  ```
+  report: <abs_path>
+  <вывод 1>
+  <вывод 2>
+  <вывод 3 - опц.>
+  next: <что main-session делает дальше>
+  ```
+- Main-session НЕ читает отчёт целиком - только нужный фрагмент через `Read offset/limit`.
+- Тайм-аут 10 минут - `TaskStop` и переформулировка.
+
+Полный список ролей - `~/.claude/agents/*.md` (12 глобальных) + `<your-workspace>/.claude/agents/*.md` (3 project-level).
+
+## Obsidian plugin data.json — НЕ ТРОГАТЬ
+НЕ удалять и НЕ перезаписывать `<vault>/.obsidian/plugins/*/data.json` — это сбрасывает API ключи плагинов (Local REST API, Semantic Notes Vault MCP), пользователь вынужден присылать новые. Backup всех известных ключей хранится в `~/.obsidian-keys/keys.json` (вне sensitive путей). Если ключ потерян — взять оттуда. Если плагин показывает blank settings — сначала UI: Cmd+R reload vault или toggle плагина в Settings, **не** удаление data.json.
+
+## Production deploy gate (HARD)
+Перед `git push` в shared remote, `gh release create`, `gh pr merge`, или skill-командами `/html-push`, `/gitlab_push`, `/publick_push` — обязателен **explicit user approve** в последних 30 user-сообщениях. Approve-фразы: «ок пуш», «выкатывай», «деплой», «можно пушить», «залей», «approve push», «merge it», «ship it».
+
+Hook `prod-push-gate.py` блокирует команду через `continue: false` если approve не найден. Force-push (`--force`, `--force-with-lease`) требует **дополнительной** approve-фразы «force ок» / «знаю про force».
+
+План «потом push» НЕ разрешение. Только явный «ок» ПОСЛЕ проверки пользователя.
+
+## Test trace требование (HARD)
+**Никогда** не говорить «готово / работает / опубликовано / задеплоен / протестирован / всё ок» если в transcript текущего turn'а нет:
+- хотя бы одного `browser_click` / `preview_click` на изменённый селектор, ИЛИ
+- вызова `qa-scenario-tester` или `ui-quality-reviewer` subagent.
+
+Hook `claim-readiness-validator.py` блокирует Stop через `decision: "block"` если этого нет. После Edit на dashboard/HTML/JS обязательно: (1) `browser_navigate` на страницу, (2) `browser_click` на изменённый элемент, (3) `browser_evaluate` проверка state, (4) `browser_resize` 1280/1600. Только после этого заявлять готовность.
+
+## Компонентная разработка (HARD)
+В `Projects/<your-dashboard>/` НЕ копировать функции/селекторы между файлами. Если функция нужна на ≥2 страницах — выносить в `dashboard/wwwroot/static/components/<name>.js` и подключать через `<script src=...>` на всех страницах.
+
+Hook `selector-duplication-detector.py` ловит копипаст-функции и HTML-id/class с partner/filter/status/select. При срабатывании — обязательно унифицировать **до** заявления готовности.
+
+## Реакция на advisory hooks (ОБЯЗАТЕЛЬНО)
+Если в контексте появилось `systemMessage` или `additionalContext` от hook'а — это **не информация**, это **команда к действию**:
+
+- `AUTO UI-REVIEW: <issues>` после Edit *.html/*.css → **обязан** вызвать `ui-quality-reviewer` subagent либо исправить перечисленное прямо сейчас. НЕ говорить «готово» пока не сделано.
+- `AUTO CONSISTENCY-CHECK: <issues>` → вызвать `consistency-checker` subagent либо исправить вхождения чисел/wikilinks. НЕ публиковать пока не разобрано.
+- `[orchestration hint] subagents: <list>` → **первое действие** — делегировать одному из перечисленных subagent'ов, не работать самому.
+- `WARNING: <your-db> SELECT без LIMIT` → не выполнять текущий запрос, делегировать `mfo-db-researcher`.
+- `WARN: Bash может вернуть >10 KB` → переписать Bash чтобы писал в файл, потом читать через Read offset/limit.
+- `⚠️ MCP-сервер ... добавлен` → не использовать `mcp__<name>__*` tools пока пользователь не рестартнет Claude Desktop. До рестарта только curl/CLI обёртки.
+- `WARNING: vault page без frontmatter` → добавить frontmatter в эту же turn.
+
+Игнорировать advisory hook = нарушение контракта. Каждый hook говорит «не отдавай результат пока не сделал X».
+
+## UI-задача: pre-flight ОБЯЗАТЕЛЬНЫЙ pipeline (HARD)
+Любая новая UI-задача (новый экран / новый раздел / новая визуализация / лидерборд / таблица / dashboard / А/Б витрина / лендинг) ДО первого Edit на HTML/CSS/JS обязана пройти **2 этапа**:
+
+1. **product-architect** через `Task(subagent_type='general-purpose', prompt='следуй ~/.claude/agents/product-architect.md ...')` → brief (что/кому/зачем/метрики/референсы/wording) → отправить пользователю на approve
+2. **ui-design-architect** через `Task(subagent_type='general-purpose', prompt='следуй ~/.claude/agents/ui-design-architect.md ...')` → screen-spec (mental model, layout grid ASCII, компоненты, состояния, responsive, конкретные референсы из reference-platforms.md) → отправить пользователю на approve
+
+Только ПОСЛЕ обоих approve — Edit.
+
+Hook `brief-gate.py` блокирует Edit через `continue:false` если в transcript НЕТ обоих сигналов (brief signal + screen-spec signal). Обход для мелких правок — fix-mode keyword в свежем user prompt («фикс / hotfix / маленьк / 1 строка / без брифа, ок»).
+
+Пользователь буквально сказал в катастрофическом случае: «мы вообщето задачу архитектурно решали, находили стили и лучшие варианты для отображения». Если ты пропускаешь ui-design-architect — результат «блок как из жопы, кнопка ублюдски».
+
+## Frontend / UI обязательный ревью ПОСЛЕ правок
+Любая Write/Edit на `*.html`, `*.css`, `*.scss`, любая UI-разработка — после правки **обязательно** делегировать `ui-quality-reviewer` subagent. Он проверяет 6 категорий: типографика, spacing 4/8 scale, цвет, состояния default/hover/active/focus, адаптивность 1280-1600, анимации.
+
+Контракт: PASS 6/6 — публикуем. FAIL — фиксим до 6/6, не отправляем «готово». Reference — Linear/Stripe/Vercel/Notion + `Projects/<your-vault>/wiki/concepts/{design-balance,html-report-design-system,html-button-states,ui-grid-discipline,reference-platforms}.md`.
+
+Hook `task-delegation-enforcer.py` блокирует Edit через `continue:false` если 5+ UI-edits сделано без вызова ui-quality-reviewer/qa-scenario-tester/ui-design-architect.
+
+Триггеры пользователя: «проверь верстку», «UI-ревью», «шрифты скачут», «отступы кривые», «непропорционально», «неудобный UX», «не премиум», «как из жопы», «ублюдски», «вне UI/UX».
+
+## Explain vs Fix (HARD)
+Если в последнем user prompt **вопрос-объяснение** (`зачем / почему / о чём / что значит / что за / что это / why / what / how does / explain / ?!`) — ты ОБЯЗАН сначала ОТВЕТИТЬ текстом ≥150 chars (что это / зачем / почему), потом дождаться следующего prompt пользователя. НЕ полезть сразу Edit/Bash/Write.
+
+Hook `explain-mode-guard.py` блокирует Edit/Write/Bash через `continue:false` если в текущем user prompt explain-pattern и assistant ещё не ответил текстом ≥150 chars. Обход — пользователь явно говорит «фикс / исправь / fix / сначала ответь и сразу чини».
+
+Пример катастрофы: пользователь спросил «зачем эта полоса, о чём она говорит» — ассистент молча полез менять heatmap палитру + редирект. Реакция: «НУ ЧТО ЗА ПИЗДЕЦ?!». НЕ повторять.
+
+## Two-Output Rule
+Каждый содержательный ответ пользователю в <your-workspace> должен обновить минимум одну страницу vault (`Projects/<your-vault>/wiki/`). Если факт новый - фиксировать в соответствующей странице через vault-writer subagent. Без фиксации факт теряется.
+
+## Архивация без удаления
+Никогда не удалять «с концами»:
+- memory feedback -> `memory/archive/<date>/<имя>.md`
+- проекты -> `_archive_marker.md` + `wiki/projects/<x>.md` `status: archived`
+- vault wiki -> frontmatter `status: archived`, остаётся на месте
+- журналы -> НЕ архивируются, immutable
+- скиллы -> `~/.claude/skills/_archive/<name>/` + `archived: true`
+
+## Когда нужен журнал сессии
+- thoughtful-задача без рубильников - обязательно
+- многошаговая работа, важная для продолжения в другой сессии - обязательно
+- короткий fast-запрос или одношаговая команда - не нужен
+
+Журнал - `journals/<date>-<topic>/log.md` (общий) или `Projects/<x>/journals/<date>-<topic>/log.md` (проектный).
+
+## OmniRoute fallback
+Если запросы к `localhost:20128` падают с `ConnectionRefused` - упал OmniRoute. Не продолжай subagent/Web/API вызовы. Перезапусти OmniRoute, потом продолжай.
+
+## WebSearch
+По умолчанию НЕ использовать. Использовать:
+- по явному запросу пользователя,
+- при поиске best practices / документации внешней библиотеки,
+- максимум один WebSearch на задачу.
+
+## Стиль
+- Русский язык.
+- Только ASCII-дефис `-`. Никогда `—` или `–`.
+- Кратко. Без длинных простыней. Сначала суть, потом детали по запросу.
+- Имя пользователя - <your-name> (не Vozakov).
+- Не выводить `/rename` в чат.
+
+## Что НЕ в этом файле (см. отдельные источники)
+- Скриншоты-2000px guardrails -> hooks в `~/.claude/settings.json`
+- MCP big-data guardrails -> hooks
+- HTML/report rules -> `<your-workspace>/.claude/rules/html-reports.md`
+- Узкая фактура проекта -> `Projects/<x>/CLAUDE.md`
+- Vault details -> `Projects/<your-vault>/_CLAUDE.md`
+- Subagent роли -> `~/.claude/agents/*.md`
+
+## Auto-memory
+Файлы в `~/.claude/projects/<encoded-path>/memory/` - отдельная система от этого CLAUDE.md (что Claude заметил vs что я ему сказал). Индекс - `MEMORY.md`.

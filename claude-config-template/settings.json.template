@@ -1,0 +1,343 @@
+{
+  "env": {
+    "ANTHROPIC_API_KEY": "sk-821b606d697c0301-4fd7ff-6284ecb9",
+    "ANTHROPIC_BASE_URL": "http://localhost:20128/v1",
+    "API_TIMEOUT_MS": "3000000",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "cx/gpt-5.4",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "cx/gpt-5.4",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "cx/gpt-5.4"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "Write(~/.claude/**)",
+      "Write(/Users/<you>/.claude/**)",
+      "Write(/Users/<you>/.claude/agents/**)",
+      "Write(/Users/<you>/.claude/skills/**)",
+      "Write(/Users/<you>/Library/Mobile Documents/**)",
+      "Write(/Users/<you>/Library/**)",
+      "Write(/private/**)",
+      "Write(/tmp/**)",
+      "Edit(~/.claude/**)",
+      "Edit(/Users/<you>/.claude/**)",
+      "Edit(/Users/<you>/.claude/agents/**)",
+      "Edit(/Users/<you>/.claude/skills/**)",
+      "Edit(/Users/<you>/Library/Mobile Documents/**)",
+      "Edit(/Users/<you>/Library/**)",
+      "Edit(/private/**)",
+      "Edit(/tmp/**)",
+      "Glob(*)",
+      "Grep(*)",
+      "mcp__gdrive__*",
+      "mcp__ide__*",
+      "mcp__plugin_playwright_playwright__*",
+      "mcp__playwright__*",
+      "mcp__plugin_context7_context7__*",
+      "mcp__telemost__*",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "mcp__google-workspace__*",
+      "mcp__tracker__*",
+      "mcp__<your-db>__*",
+      "mcp__telegram__*",
+      "mcp__gitlab__*",
+      "mcp__firebase__*",
+      "Agent(*)",
+      "Skill(*)",
+      "TaskCreate(*)",
+      "TaskGet(*)",
+      "TaskList(*)",
+      "TaskOutput(*)",
+      "TaskStop(*)",
+      "TaskUpdate(*)",
+      "mcp__pencil",
+      "mcp__Claude_Preview__*",
+      "mcp__obsidian-graph__*",
+      "mcp__obsidian__*",
+      "mcp__<your-company>-usedesk__*",
+      "mcp__scheduled-tasks__*",
+      "mcp__ccd_session__*",
+      "mcp__ccd_session_mgmt__*",
+      "mcp__ccd_directory__*",
+      "mcp__mcp-registry__*",
+      "mcp__Claude_in_Chrome__*",
+      "Write",
+      "Edit",
+      "TodoWrite"
+    ],
+    "defaultMode": "bypassPermissions",
+    "additionalDirectories": [
+      "/Users/<you>/.claude",
+      "/Users/<you>/.claude/agents",
+      "/Users/<you>/.claude/skills",
+      "/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>",
+      "/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>/.claude",
+      "/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>/.claude/agents",
+      "/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>/Projects",
+      "/tmp"
+    ]
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "skipAutoPermissionPrompt": true,
+  "model": "opus[1m]",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": ".*browser_take_screenshot$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/screenshot-fullpage-block.py"
+          }
+        ]
+      },
+      {
+        "matcher": ".*browser_resize$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/browser-resize-block.py"
+          }
+        ]
+      },
+      {
+        "matcher": ".*preview_screenshot$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/preview-screenshot-block.py"
+          }
+        ]
+      },
+      {
+        "matcher": ".*preview_resize$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/preview-resize-block.py"
+          }
+        ]
+      },
+      {
+        "matcher": ".*browser_snapshot$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/browser-snapshot-block.py"
+          }
+        ]
+      },
+      {
+        "matcher": ".*browser_navigate$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/browser-navigate-info.py"
+          }
+        ]
+      },
+      {
+        "matcher": ".*browser_evaluate$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/browser-evaluate-warn.py"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__<your-db>__(execute|query)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/db-no-limit-warn.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/bash-large-output-warn.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/explain-mode-guard.py",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/prod-push-gate.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/brief-gate.py",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/task-delegation-enforcer.py",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/explain-mode-guard.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/vault-frontmatter-check.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/ui-auto-review.py",
+            "timeout": 30,
+            "statusMessage": "UI auto-review (typography/spacing/states/motion)"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/consistency-check.py",
+            "timeout": 30,
+            "statusMessage": "Consistency auto-check (numbers/dates/wikilinks/sluggable)"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/selector-duplication-detector.py",
+            "timeout": 30,
+            "statusMessage": "Selector duplication detector"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/mcp-restart-hint.py"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/prompt-orchestration-hint.py"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c '\nLOG=\"/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>/Projects/<your-vault>/log.md\"\n[ -f \"$LOG\" ] || exit 0\n\nDATE=$(date +%Y-%m-%d)\nTIME=$(date +%H:%M)\n\nSTDIN=$(cat)\nSESSION_ID=$(echo \"$STDIN\" | jq -r \".session_id // empty\" 2>/dev/null)\n\nif [ -z \"$SESSION_ID\" ]; then\n  printf \"\\n## [%s %s] auto | session ended\\n\" \"$DATE\" \"$TIME\" >> \"$LOG\"\n  exit 0\nfi\n\nJSONL=\"/Users/<you>/.claude/projects/-Users-via-Library-Mobile-Documents-com-apple-CloudDocs-Cursor-cloud-<your-workspace>/${SESSION_ID}.jsonl\"\n\nif [ ! -f \"$JSONL\" ]; then\n  printf \"\\n## [%s %s] auto | session %s ended (no transcript)\\n\" \"$DATE\" \"$TIME\" \"${SESSION_ID:0:8}\" >> \"$LOG\"\n  exit 0\nfi\n\nTOTAL=$(grep -c \"\\\"type\\\":\\\"tool_use\\\"\" \"$JSONL\" 2>/dev/null)\n[ -z \"$TOTAL\" ] && TOTAL=0\n\nif [ \"$TOTAL\" -lt 10 ]; then\n  printf \"\\n## [%s %s] auto | session %s ended (light, %s tools)\\n\" \"$DATE\" \"$TIME\" \"${SESSION_ID:0:8}\" \"$TOTAL\" >> \"$LOG\"\n  exit 0\nfi\n\nTOP_FILES=$(tail -200 \"$JSONL\" 2>/dev/null | jq -rs \"[.[] | .message?.content // []] | map(if type == \\\"array\\\" then . else [] end) | flatten | [.[] | select(type == \\\"object\\\" and .type == \\\"tool_use\\\") | (.input.file_path // .input.path // empty)] | map(select(. != null and . != \\\"\\\")) | reverse | unique | .[:5] | .[] | sub(\\\"^/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>/\\\"; \\\"\\\")\" 2>/dev/null | head -5 | sed \"s|^|  - |\")\n\nTOOL_COUNTS=$(tail -200 \"$JSONL\" 2>/dev/null | jq -rs \"[.[] | .message?.content // []] | map(if type == \\\"array\\\" then . else [] end) | flatten | [.[] | select(type == \\\"object\\\" and .type == \\\"tool_use\\\") | .name] | group_by(.) | map({n: .[0], c: length}) | sort_by(.c) | reverse | .[:5] | map(.n + \\\":\\\" + (.c|tostring)) | join(\\\", \\\")\" 2>/dev/null)\n\nif [ -n \"$TOP_FILES\" ]; then\n  {\n    printf \"\\n## [%s %s] auto | session %s\\n\" \"$DATE\" \"$TIME\" \"${SESSION_ID:0:8}\"\n    printf -- \"- **Files touched (top):**\\n%s\\n\" \"$TOP_FILES\"\n    printf -- \"- **Tools:** %s\\n\" \"$TOOL_COUNTS\"\n    printf -- \"- **Total tool calls:** %s\\n\" \"$TOTAL\"\n    printf -- \"- **TODO:** human review and write proper wiki entry\\n\"\n  } >> \"$LOG\"\nelse\n  printf \"\\n## [%s %s] auto | session %s (%s tools, no file paths)\\n\" \"$DATE\" \"$TIME\" \"${SESSION_ID:0:8}\" \"$TOTAL\" >> \"$LOG\"\nfi\n\nexit 0\n' 2>/dev/null || true"
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/claim-readiness-validator.py",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/session-auto-summary.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/vault-bootstrap.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/vault-bootstrap.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "code-review@claude-plugins-official": false,
+    "context7@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": false,
+    "pyright-lsp@claude-plugins-official": false,
+    "serena@claude-plugins-official": false,
+    "security-guidance@claude-plugins-official": false,
+    "superpowers@claude-plugins-official": true,
+    "firebase@claude-plugins-official": false,
+    "obsidian@obsidian-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "obsidian-skills": {
+      "source": {
+        "source": "github",
+        "repo": "kepano/obsidian-skills"
+      }
+    }
+  },
+  "language": "russian",
+  "terminalTitleFromRename": false,
+  "effortLevel": "high",
+  "theme": "light"
+}
