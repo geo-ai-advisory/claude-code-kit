@@ -111,6 +111,113 @@ Hook `selector-duplication-detector.py` ловит копипаст-функци
 
 Игнорировать advisory hook = нарушение контракта. Каждый hook говорит «не отдавай результат пока не сделал X».
 
+## Любая фича = автономный full-stack тест ДО «готово» (HARD-ABSOLUTE)
+
+Когда пилится фича (новая или фикс) — **тестировать на всех слоях АВТОНОМНО**, в фоне, без вопросов пользователю. Пользователь видит только финальное «готово к деплою» после PASS на всех слоях. До этого момента — никаких сообщений о готовности.
+
+### Обязательные слои тестирования (все 4)
+
+1. **Backend layer** (если затронут backend код):
+   - `curl` на endpoint с разными payload (empty, valid, edge: null/0/expired auth/wrong role)
+   - Проверить response shape: все поля на месте, типы корректны
+   - **КЛЮЧЕВОЕ:** проверить что endpoint возвращает данные которые **frontend ожидает** (по контракту)
+   - Сравнить с DB query — те же агрегаты на тех же данных?
+
+2. **Frontend layer** (если затронут frontend код):
+   - `browser_evaluate` для state объекта — все ключи на месте, нет undefined fallback
+   - Проверить что frontend читает **тот же** field из API что backend возвращает
+   - Console errors — есть ли warning «field is undefined, fallback to X»?
+
+3. **UI layer** (визуальное):
+   - `ui-quality-reviewer` этап 7 (live behavior + edge data + states)
+   - `qa-scenario-tester` — 5-step functional test против acceptance criteria
+
+4. **Cross-layer verification (САМОЕ ГЛАВНОЕ — катастрофа 12.05 произошла именно тут):**
+   - **Вытащить N значений из UI** через `browser_evaluate` (например `[...document.querySelectorAll('.cell')].map(c => +c.textContent)`)
+   - **Вытащить те же N значений из backend API** через `curl /endpoint | jq`
+   - **Сравнить element-by-element** — должны совпадать с точностью до округления
+   - **FAIL** если расходятся → root cause анализ (backend missing field? frontend fallback на грубый calc? cache stale?)
+
+### Конкретный кейс который должен ловиться
+
+Реальный баг 12.05:
+- Backend `/offer-stats` НЕ возвращал `posterior` field
+- Frontend сделал fallback `variants × offerCount` (грубое деление)
+- UI heatmap показал цифры из fallback'а
+- Расхождение между cells, hypothesis блок и accumulated блок — все считали по-разному
+
+**Cross-layer тест поймал бы это за 30 секунд:**
+```bash
+# Backend
+curl localhost:5000/api/experiments/offer-stats | jq '.posterior'
+# null → BACKEND FAIL
+
+# Frontend
+browser_evaluate: state.offerStats.posterior
+# undefined → FRONTEND обнаружил missing field
+
+# UI
+heatmap cells values
+# выглядят разумно но это fallback, не real data → UI обманчиво PASS
+
+# Cross-check
+diff <(curl ... | jq) <(browser_evaluate ...)
+# huge differences → ROOT CAUSE найден
+```
+
+### Pipeline (автономный, без вопросов)
+
+```
+User: «<задача>»
+  ↓
+[если новая фича / жалоба качества] product-architect → brief
+  ↓
+[если UI/композиция] ui-design-architect → screen-spec
+  ↓
+Edit (backend / frontend / UI)
+  ↓
+АВТОНОМНО (без approve промежуточных шагов):
+├─ Backend layer test (api-contract-tester + curl)
+├─ Frontend layer test (qa-scenario-tester State assertions)
+├─ UI layer test (ui-quality-reviewer этап 7)
+└─ Cross-layer verification (API vs frontend state vs UI display)
+  ↓
+Все PASS? → НЕТ → loop с фиксами до PASS
+Все PASS? → ДА → одно сообщение пользователю:
+   «Готово к деплою. Изменения: <3-5 строк>. Тесты: backend ✓ frontend ✓ UI ✓ cross-layer ✓. Push?»
+  ↓
+Только теперь — approve пользователя на push
+```
+
+### Запрещено
+
+- ❌ Pushить без cross-layer verification
+- ❌ Говорить «готово» если хотя бы один слой не тестировался
+- ❌ Спрашивать пользователя «работает?» — это работа агента
+- ❌ Говорить «я что должен всё тестить блять?» — нет, **агент должен**, это его контракт
+- ❌ Делать fallback в коде без проверки что backend реально предоставляет field
+- ❌ Bump cache + push без cross-layer тестов
+
+### Anti-pattern из реальной катастрофы
+
+```
+[ассистент] Нашёл root cause — /offer-stats НЕ возвращает posterior
+[ассистент] Заменяю источник данных heatmap UI: с posterior на heatmapCells
+[ассистент] Bump cache + verify локально + commit + push
+[user] обновился и хули?! цифры разные абсолютно
+```
+
+**Что было пропущено:**
+1. После fix не сделан backend test что posterior теперь в response (или замены работают)
+2. Не сделан cross-layer verify что UI показывает те же числа что API возвращает
+3. Pushнули без full-stack теста
+
+**Что должно было произойти:**
+1. Fix → curl /offer-stats → проверить posterior present
+2. Frontend reload → browser_evaluate state.offerStats — все fields на месте
+3. Cross-layer: cells data === backend posterior
+4. Все PASS → push approved by user
+
 ## Жалоба на качество UI/UX = ПОЛНЫЙ pipeline (HARD-ABSOLUTE)
 
 Если пользователь говорит фразы выражающие **недовольство существующим UI/UX качеством** — это **триггер на полный re-architecture pipeline**, не на быстрый fix.
