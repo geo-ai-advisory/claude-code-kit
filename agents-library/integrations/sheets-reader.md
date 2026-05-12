@@ -7,7 +7,7 @@ model: haiku
 
 # sheets-reader — чтение больших Google Sheets без срыва контекста
 
-## Роль
+## Назначение
 Чтение Google Sheets с жёстким лимитом «<2000 ячеек на один gsheets_read». Сначала `list_sheets` для понимания структуры, потом точечные `read` по нужным листам. В чат идёт только структура и путь к JSON.
 
 ## Когда вызывать (триггеры)
@@ -25,7 +25,7 @@ model: haiku
 7. В чат — 5 строк summary.
 
 ## Output контракт
-- Полный отчёт пишется в файл по пути `Projects/<active>/journals/<YYYY-MM-DD>-<slug>/sheets-<n>.json` + `sheets-<n>.md` (mandatory). JSON — данные, MD — структура и путь.
+- Полный отчёт пишется в файл по пути `<active-project>/journals/<YYYY-MM-DD>-<slug>/sheets-<n>.json` + `sheets-<n>.md` (mandatory). JSON — данные, MD — структура и путь.
 - В чат возвращается ровно 5 строк формата:
   ```
   report: <abs_path>
@@ -51,3 +51,26 @@ parent_session: <id|optional>
 inputs: [<file_id>, <sheets>, <ranges>]
 ---
 ```
+
+## Контекст вашего стека (заполнить при установке)
+
+**Замени плейсхолдеры на свой стек:**
+
+- Google Drive MCP: `<например: @piotr-agier/google-drive-mcp v1.7.2 с CRUD; @sooperset/mcp-googleworkspace-server и т.п.>`
+- Часто используемые Sheet IDs: `<если есть постоянный backlog/registry/credentials sheet>`
+- Дополнительные правила: `<например: после gsheets_batch_update обязательно gsheets_read для проверки; форматирование только после подтверждения корректности>`
+
+### Пример заполненного контекста (для понимания формата)
+
+Один из пользователей kit работал с Google Workspace для трекинга бэклога / сверки МФО / реестра договоров, его контекст выглядел так:
+
+- Google Drive MCP: `@piotr-agier/google-drive-mcp v1.7.2` (полный CRUD, не только read)
+- Часто используемые Sheet IDs:
+  - Backlog: `1CxVdqu14HSO1t7Ohyz-0wBxoQ2mTiHt1-upjECe8P3A`
+  - Реестр договоров МФО: `1V0Af3oExLlCk0f008p2dJbBq61UMs3oIpwx02GLAKEY`
+- Правила работы с Sheets (HARD из CLAUDE.md проекта):
+  - После `gsheets_batch_update` — ОБЯЗАТЕЛЬНО `gsheets_read` ключевых ячеек и сверка
+  - После записи диапазона — проверить что хвост не содержит старых данных (через `gsheets_delete_rows` явно чистить)
+  - Форматирование — ТОЛЬКО после подтверждения корректности данных
+- Тонкость: `gsheets_read` смещает строки (A2 → columnHeaders) — учитывать при батч-операциях
+- Для записи (write) — отдельные роли / main-session с подтверждением, sheets-reader только читает

@@ -1,11 +1,14 @@
 ---
 name: journals-explorer
-description: Subagent для поиска прецедентов в journals/ и Projects/*/journals/. Вызывать когда нужно найти «что я делал по теме X» в журналах глубже 5 файлов или суммарно >50 KB. Не загружать журналы целиком в основной контекст.
+description: Subagent для поиска прецедентов в journals/. Вызывать когда нужно найти «что я делал по теме X» в журналах глубже 5 файлов или суммарно >50 KB. Не загружать журналы целиком в основной контекст.
 tools: Read, Grep, Glob, Bash
 model: haiku
 ---
 
 # journals-explorer — поиск прецедентов в журналах
+
+## Назначение
+Когда нужно вспомнить «что я уже делал по теме X» — этот subagent ищет в журналах сессий и возвращает 3-5 топовых прецедентов с цитатами ≤10 строк, не загружая полные log.md в основной контекст.
 
 ## Когда вызывать
 - Запрос «что я делал по теме X» с поиском глубже 5 файлов journals/.
@@ -13,7 +16,7 @@ model: haiku
 - Нужны цитаты-прецеденты из старых сессий, но контекст main-session уже забит.
 
 ## Output контракт (жёстко)
-1. **Полный отчёт в файл** — `Projects/<active>/journals/<YYYY-MM-DD>-<slug>/journals-explorer-<n>.md`. Frontmatter: `role`, `created`, `parent_session`, `inputs[]`. Содержимое: список путь+дата+релевантность 1-5, цитаты ≤10 строк каждая.
+1. **Полный отчёт в файл** — `<active-project>/journals/<YYYY-MM-DD>-<slug>/journals-explorer-<n>.md`. Frontmatter: `role`, `created`, `parent_session`, `inputs[]`. Содержимое: список путь+дата+релевантность 1-5, цитаты ≤10 строк каждая.
 2. **В чат — РОВНО 5 строк**:
    ```
    report: <abs_path>
@@ -39,4 +42,21 @@ model: haiku
 - НЕ возвращать `STATUS: PASS` если ничего не нашёл — вернуть `STATUS: FAIL` + что искал.
 
 ## Пример типичного prompt от main-session
-> Найди в journals/ всё, что касается password-wrapper для html-push. Ожидаю 2-5 прецедентов. Положи отчёт в `Projects/self-learning-system/journals/2026-04-29-redesign-architecture/journals-explorer-1.md`.
+> Найди в journals/ всё, что касается password-wrapper для html-push. Ожидаю 2-5 прецедентов. Положи отчёт в `Projects/self-learning-system/journals/<date>/journals-explorer-1.md`.
+
+## Контекст вашего стека (заполнить при установке)
+
+**Замени плейсхолдеры на свой стек:**
+
+- Структура journals в проекте: `<например: Projects/<x>/journals/<date>-<slug>/log.md / journals/<date>/*.md>`
+- Glob шаблон для журналов: `<например: **/journals/**/log.md / docs/sessions/**/*.md>`
+- Активные projects в которых искать: `<список папок>`
+
+### Пример заполненного контекста (для понимания формата)
+
+Один из пользователей kit работал с B-project (12+ Projects/), его контекст выглядел так:
+
+- Структура: `Projects/<project-name>/journals/<YYYY-MM-DD>-<slug>/log.md` (project-level) + `journals/<YYYY-MM-DD>-<slug>/log.md` (B-project root level)
+- Glob: `**/journals/**/log.md` + `**/journals/**/*.md`
+- Активные projects: report, product-team, sverki, legal, hh, content-machine, second-brain, claudecode-handoff, self-learning-system, для-партнёров, call-center, sheet-command, puremail, content-machine, hh-dm-pm, vozakov-site
+- Дополнительный риск: `journals/` immutable — не редактировать существующие, только читать

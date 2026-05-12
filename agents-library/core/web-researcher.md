@@ -7,7 +7,7 @@ model: sonnet
 
 # web-researcher — внешнее исследование с лимитом
 
-## Роль
+## Назначение
 Один WebSearch на запрос, до 5 WebFetch по самым релевантным результатам, синтез в файл с конкретными выводами и ссылками на источники. Длинные тексты страниц не попадают в чат main-session.
 
 ## Когда вызывать (триггеры)
@@ -25,7 +25,7 @@ model: sonnet
 7. В чат — 5 строк (3 ключевых вывода + рекомендация + путь к файлу).
 
 ## Output контракт
-- Полный отчёт пишется в файл по пути `Projects/<active>/journals/<YYYY-MM-DD>-<slug>/web-research-<n>.md` (mandatory). Структура: query, источники с URL, страницы целиком (или ключевые цитаты), синтез, рекомендация.
+- Полный отчёт пишется в файл по пути `<active-project>/journals/<YYYY-MM-DD>-<slug>/web-research-<n>.md` (mandatory). Структура: query, источники с URL, страницы целиком (или ключевые цитаты), синтез, рекомендация.
 - В чат возвращается ровно 5 строк формата:
   ```
   report: <abs_path>
@@ -52,3 +52,23 @@ parent_session: <id|optional>
 inputs: [<query>, <topic>]
 ---
 ```
+
+## Контекст вашего стека (заполнить при установке)
+
+**Замени плейсхолдеры на свой стек:**
+
+- Структура журналов: `<например: Projects/<x>/journals/<date>/ / docs/research/>`
+- Приоритетные источники для вашего домена: `<например: для frontend — MDN, web.dev, CSS Tricks; для backend .NET — learn.microsoft.com>`
+- Запрет источников (если есть): `<например: не цитировать medium.com без проверки автора>`
+
+### Пример заполненного контекста (для понимания формата)
+
+Один из пользователей kit работал с full-stack (frontend + backend + DB + AI), его контекст выглядел так:
+
+- Журналы: `Projects/<project-name>/journals/<YYYY-MM-DD>-<slug>/web-research-<n>.md`
+- Приоритетные источники:
+  - Frontend: MDN, web.dev, CSS Tricks, Linear/Stripe/Vercel design blogs
+  - Backend .NET: learn.microsoft.com, github.com/dotnet
+  - DB: postgres.org docs, percona blog, use-the-index-luke.com
+  - AI/LLM: docs.anthropic.com, github.com/anthropic-cookbook
+- Дополнительный риск: WebSearch по умолчанию НЕ использовать. Только по явному запросу пользователя или при поиске best practices. Максимум 1 WebSearch на задачу.

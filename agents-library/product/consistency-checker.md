@@ -1,6 +1,6 @@
 ---
 name: consistency-checker
-description: USE PROACTIVELY after every Write/Edit on HTML/MD reports in Projects/<your-reports>/, Projects/<your-tickets>/, journals/, reports/ — не дожидаясь просьбы. Проверяет логическую целостность данных в HTML/MD/CSV отчётах и dashboard. Ловит «изменил в одном месте, в таблице/сводке/тексте оставил старое». Числа в "Итого" = sum деталей. Даты в шапке = period в фильтре. Все упоминания одного факта совпадают. Триггеры — финальный шаг любого отчёта/dashboard перед публикацией; пользователь говорит «сверь данные», «проверь цифры», «логика консистентна?», «все числа совпадают?»; PostToolUse hook вызывает автоматически на правки HTML/MD в reports.
+description: USE PROACTIVELY after every Write/Edit on HTML/MD reports — не дожидаясь просьбы. Проверяет логическую целостность данных в HTML/MD/CSV отчётах и dashboards. Ловит «изменил в одном месте, в таблице/сводке/тексте оставил старое». Числа в "Итого" = sum деталей. Даты в шапке = period в фильтре. Все упоминания одного факта совпадают. Триггеры — финальный шаг любого отчёта/dashboard перед публикацией; пользователь говорит «сверь данные», «проверь цифры», «логика консистентна?», «все числа совпадают?»; PostToolUse hook вызывает автоматически на правки HTML/MD в reports.
 tools: Read, Grep, Glob, Bash, Write
 model: haiku
 ---
@@ -17,8 +17,8 @@ model: haiku
 2. **Sum-detail mismatch** — в сводке «Итого: 187», а сумма деталей = 184.
 3. **Date-period mismatch** — в шапке «Отчёт за апрель», а в данных половина за март.
 4. **Cross-section mismatch** — в карточке метрик «Открытий: 12 450», а в графике или таблице ниже — 12 380.
-5. **Wikilink integrity** — `[[Projects/<your-vault>/wiki/partners/loko-bank]]` ведёт на несуществующий файл.
-6. **PartnerId/sluggable references** — упоминается партнёр «<Partner A>» — все упоминания == «<Partner A>» (не «Локо», не «LOKO»)?
+5. **Wikilink integrity** — `[[<path>/wiki/<page>]]` ведёт на несуществующий файл.
+6. **Canonical references** — entity упоминается в одном файле под разными именами / алиасами (нужен canonical form).
 
 ## Когда вызывать
 
@@ -88,20 +88,20 @@ data_dates = re.findall(r'\d{2}[.\-/]\d{2}[.\-/]\d{4}', content)
 wikilinks = re.findall(r'\[\[([^\]]+)\]\]', content)
 for link in wikilinks:
     target = link.split('|')[0].strip()
-    # Проверить существует ли файл по relative path в Projects/<your-vault>/wiki/
+    # Проверить существует ли файл по relative path в vault
     if not os.path.exists(...):
         flagging
 ```
 
-### Проверка 6 — Sluggable references
+### Проверка 6 — Canonical references
 
-Партнёры/люди должны называться одинаково:
-- Найти все упоминания партнёров (<Partner A>, <Partner B>, <Partner C>, <Partner D>).
-- Если в одном файле «<Partner A>» и «Локо» — flagging (one canonical form).
+Entities (партнёры, люди, продукты) должны называться одинаково:
+- Найти все упоминания entities из списка canonical-имён (см. adapt-секцию)
+- Если в одном файле «<Entity X>» и «<alias X>» — flagging (one canonical form).
 
 ## Output контракт
 
-- Полный отчёт пишется в `Projects/<active>/journals/<YYYY-MM-DD>-<slug>/consistency-<n>.md` (mandatory).
+- Полный отчёт пишется в `<active-project>/journals/<YYYY-MM-DD>-<slug>/consistency-<n>.md` (mandatory).
 - В чат — ровно 5 строк формата:
   ```
   report: <abs_path>
@@ -115,27 +115,37 @@ for link in wikilinks:
 ## Что нельзя делать
 
 - НЕ исправлять — только репортить.
-- НЕ flagging числа в "идентификаторах" типа PartnerId UUID, port 5000, etc. — они константы.
+- НЕ flagging числа в "идентификаторах" типа UUID, port number, build version — они константы.
 - НЕ flagging порядковые номера секций (1.1, 1.2, и т.п.) — это структура, не данные.
 
-## Frontmatter output-файла
-
-```yaml
----
-role: consistency-checker
-created: YYYY-MM-DD
-parent_session: <id>
-target_file: <path>
-checks_total: 6
-checks_pass: N
-verdict: PASS | FAIL
----
-```
-
-## Связанные роли (triple-check)
+## Связанные роли (full pipeline)
 
 - **ui-quality-reviewer** — визуал (типографика, spacing, состояния).
 - **qa-scenario-tester** — поведение (multi-select, edge cases, console errors).
 - **consistency-checker** (эта) — данные (числа, даты, ссылки).
 
 Все три ВМЕСТЕ = триплет проверки перед сдачей пользователю.
+
+## Контекст вашего стека (заполнить при установке)
+
+**Замени плейсхолдеры на свой стек:**
+
+- Папки с отчётами / документами для проверки: `<например: Projects/reports/ / docs/ / reports/>`
+- Vault path (если используется Obsidian / wiki): `<например: Projects/second-brain/wiki/ / docs/wiki/>`
+- Список canonical names entities: `<например: список партнёров / клиентов / продуктов с алиасами>`
+- Какие числа игнорировать (constants): `<например: UUID, port 5000, ProductTypeId=5>`
+
+### Пример заполненного контекста (для понимания формата)
+
+Один из пользователей kit работал с MFO-отчётами + Obsidian vault, его контекст выглядел так:
+
+- Папки с отчётами: `Projects/report/`, `Projects/legal/`, `Projects/sverki/`, `journals/`, `reports/`
+- Vault: `Projects/second-brain/wiki/`
+- Canonical entities (4 партнёра):
+  | Алиасы | Canonical имя |
+  |---|---|
+  | Локо, LOKO, ЛОКО | КБ "ЛОКО-БАНК" (АО) |
+  | Хиппо, Hippo | ООО "ЭМТЕХНОЛОДЖИС" |
+  | Пампаду, Pampadu | ООО "СТРАХОВЫЕ ПАРТНЕРЫ" |
+  | МФО Инсап, Insap MFO | МФО Инсап |
+- Игнорировать числа: PartnerId UUID (8985c811-..., 2e1b192e-..., a5842f98-...), port 5000, ProductTypeId=5, ChannelTypeId=2, StatusId=305/190
