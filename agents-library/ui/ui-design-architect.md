@@ -314,6 +314,108 @@ status: draft
 - Action buttons в последней колонке: Pause / Promote (только для winning > N дней)
 - Keyboard: ArrowUp/Down nav, Enter = click row
 
+## Functional behavior (mandatory — для qa-scenario-tester)
+
+Для каждого компонента в screen-spec описать что происходит **после** каждого user action в виде YAML. Это критический input для qa-scenario-tester: без functional behavior он проверит только «элемент кликается» и пропустит functional bugs (рассинхрон, cursor reset, unintended side effects, edge cases с empty rendering).
+
+Формат — YAML с полями `on`, `result`, `side_effects`, `invariants`, `must_NOT_happen`:
+
+```yaml
+component: TenantSwitcher
+actions:
+  - on: click trigger
+    result: dropdown panel opens, search input focused, items rendered with pinned-first ordering
+    side_effects:
+      - panel renders в Z=high (поверх остального контента)
+    invariants:
+      - panel НЕ закрывает sticky header
+      - keyboard nav готов (focusable items)
+    must_NOT_happen: []
+
+  - on: type in search (5 keystrokes)
+    result: items filtered by name.toLowerCase().includes(query); first match highlighted
+    invariants:
+      - input.selectionStart === query.length (cursor НЕ сбрасывается на 0)
+      - panel остаётся открытым между keystrokes
+      - document.activeElement === input (focus сохраняется)
+    must_NOT_happen:
+      - selectionStart === 0 после keystroke (AP-3 cursor reset)
+      - panel закрывается между вводом букв
+      - буквы отображаются в обратном порядке
+
+  - on: click item (tenant X)
+    result: state.selectedTenant = X.key; localStorage.setItem('selected_tenant', X.key); ВСЕ data sections страницы перерисовываются с tenantKey=X.key
+    side_effects:
+      - emit event 'tenant-changed' для других компонентов (heatmap, leaderboard, kpi-cards)
+      - close panel
+      - update header tenant-name
+      - update URL `?tenant=<X.key>` (если используется routing)
+    invariants:
+      - все секции (header + heatmap + table + cards) показывают данные X
+      - network request содержит tenantId=X (verify через browser_network_requests)
+      - body data-tenant === X
+    must_NOT_happen:
+      - старая data tenant'а предыдущего остаётся на heatmap / cards / table (AP-1 sync)
+      - другие tenant-dependent secondary elements (filters, badges) не обновлены (AP-11 cross-component)
+      - двойной tenant-switcher в DOM (legacy `<select>` + новый компонент) — split brain (AP-10)
+
+  - on: reload page after tenant=X selected
+    result: page restores tenant=X from URL > localStorage > default
+    invariants:
+      - URL.searchParams.tenant === X (preserved)
+      - localStorage.selected_tenant === X
+      - header показывает X
+      - все секции грузятся с X data
+    must_NOT_happen:
+      - sсбрасывается на default tenant после reload (AP-8 persistence)
+      - URL ?tenant=X игнорируется при initialization
+
+component: PromoteToBaseButton
+actions:
+  - on: click on variant Y row
+    result: variant Y помечен как новый control в эксперименте
+    side_effects:
+      - POST /experiments/<id>/promote {variantId: Y}
+      - history записывается с предыдущим control + date range
+      - UI обновляет visual indicator (star / badge) на Y
+    invariants:
+      - experiment.status === 'running' (НЕ closed)
+      - variants[old_base].history содержит {from: <start_date>, to: <now>, was_control: true}
+      - variants[Y].control === true
+      - другие варианты продолжают идти (traffic split не остановлен)
+    must_NOT_happen:
+      - experiment.status === 'completed' (AP-5 unintended close)
+      - button hidden на variants с малыми кликами (AP-4 — должна быть disabled с tooltip, не hidden)
+      - history не записана (теряем контекст)
+
+  - on: click on variant Y with edge data (5 clicks)
+    result: button visible (НЕ display:none), либо clickable либо disabled с tooltip "мало данных, force?"
+    invariants:
+      - button.offsetParent !== null (visible)
+    must_NOT_happen:
+      - button.style.display === 'none' (AP-4)
+      - кнопки нет в DOM
+```
+
+**Без секции Functional behavior в screen-spec — qa-scenario-tester не имеет inputs для functional assertions** и вернёт «обязал запросить screen-spec через Task subagent».
+
+### Cross-reference invariants (mandatory если entity рендерится в N местах)
+
+Если одна entity рендерится в нескольких компонентах одновременно (например star «base» + полный list порядка) — обязательно описать **cross-component invariants**:
+
+```yaml
+cross_components:
+  - entity: current_base_order
+    rendered_in:
+      - LeaderboardStarBadge (звезда на строке базового варианта)
+      - OrderInlineList (inline список «1→2→3→...→N» рядом со звездой)
+      - HeatmapDefaultMarker (отметка какой порядок default в heatmap)
+    invariant: все 3 компонента показывают ОДИН И ТОТ ЖЕ порядок (когда меняется base — все 3 обновляются синхронно)
+    must_NOT_happen:
+      - один компонент показывает порядок A, другой порядок B (AP-11)
+      - звезда без полного inline списка рядом (AP-6 — пользователь не помнит «что за порядок»)
+```
+
 ## Конкретные референсы
 
 | Платформа | URL | Что украдено |

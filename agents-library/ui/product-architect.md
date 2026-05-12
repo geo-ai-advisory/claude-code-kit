@@ -127,6 +127,33 @@ model: sonnet
 - Если показываешь heatmap с absolute значениями метрик от разных entities (офферы с разными ставками; tenants с разным трафиком) → нужна **нормировка** (row-wise rank / delta vs avg / z-score)
 - Если данные позволяют автоматически предложить «попробуй вот так» → должна быть **auto-hypothesis section** + кнопка теста. Не заставлять пользователя самому строить порядок из чисел
 
+## Acceptance criteria для каждого элемента (mandatory section)
+
+Корневой принцип: brief не закрывается без acceptance criteria. Иначе qa-scenario-tester проверит только «элемент кликается» и пропустит functional bugs (рассинхрон header vs body, cursor reset при поиске, action закрывает что-то ненужное, edge data рендерит пустоту). Реальная катастрофа: 12 багов прошли мимо structural QA в prod, пользователь нашёл руками.
+
+Brief ОБЯЗАН включать таблицу для каждого user-facing элемента:
+
+| Элемент | User action | Expected outcome (observable) | Failure pattern (anti-pattern) |
+|---|---|---|---|
+| Tenant switcher | Click dropdown → select tenant X | Header + heatmap + table + KPI cards показывают данные X; network request содержит `tenantId=X`; localStorage `selected_tenant=X`; URL `?tenant=X` (если есть routing) | Header показывает X, остальное — данные предыдущего; cursor reset при поиске; reload сбрасывает на default |
+| Action button «Promote» (на варианте лидерборда) | Click on variant Y row | State change применён `status === 'running'`; variant Y помечен как новый control (флаг + визуальный indicator); старый base сохранён в history с диапазоном дат «<from> — <to>» | Эксперимент закрыт `status === 'completed'`; история не обновлена; кнопка скрыта на edge data (variant с малыми данными) вместо disabled с tooltip |
+| Search input в селекторе | Typing 5 keystrokes | После каждого keystroke `input.selectionStart === query.length`; filtered list содержит matched items; panel остаётся открытым; focus сохраняется на input | Cursor сбрасывается на 0 после keystroke; буквы вводятся в обратном порядке; panel закрывается между вводами |
+| Heatmap row «entity × position» | Render с multiple entities разных scales | Row-normalized values (relative rank within row); цветовая шкала per row, не global; entities с разными scales сравнимы только внутри своего ряда | Absolute global normalize; entity A (scale 1000) vs entity B (scale 100) напрямую сравниваются цветом → бессмысленное сравнение |
+| Standalone icon «★ default» (или иконка состояния) | Render с пометкой текущего default | Иконка показывается + рядом полный inline list (или tooltip) показывает то что помечено; user видит «что именно отмечено» | Одинокая звезда без объяснения; user не помнит «что именно сейчас default» |
+| Progress bar | Process running N days, K units accumulated | Progress.value = formula(K / target); визуально отражает реальный прогресс; данные из API соответствуют displayed value | Progress показывает 0% при ненулевых данных в БД; rendering из stale source; нет re-fetch on view change |
+| «+ Create new» button | Click → create entity | Entity создаётся (POST /entity → 201); видна в списке на той же странице И на legacy странице (если есть split UI) | Создаётся только в одном UI — другой UI её не видит (split brain); двойной endpoint → разная data |
+| Empty state | Open page для tenant'а без истории | Centered illustration / sketch + headline «У <tenant> ещё нет <entities>» + CTA button «Создать первый» | Просто пустая страница без объяснения и без CTA → user не понимает что делать |
+| Sticky header + search input | Scroll page 400px down | Search input остаётся accessible (можно кликнуть); если sticky overlap — input занимает другой z-index или сам становится sticky | Header наезжает поверх input на scroll; `elementFromPoint(input.x, input.y) !== input` → user не может кликнуть |
+
+**Без acceptance criteria для каждого элемента brief считается incomplete.** qa-scenario-tester читает эту таблицу как **mandatory input** — без неё он не может писать functional assertions и вернёт «обязал запросить acceptance criteria через Task subagent».
+
+### Дополнительный sanity check для acceptance criteria
+
+Для каждой строки в таблице — пройти 3 вопроса:
+1. **Observable?** — outcome можно проверить через browser_evaluate / browser_network_requests / browser_console_messages? Если нет — переформулировать в наблюдаемых терминах.
+2. **Falsifiable?** — есть конкретный способ доказать что НЕ работает? Если нет — failure pattern слишком расплывчат.
+3. **Edge cases?** — что при 0 элементах, при 1 элементе, при max элементах, при missing data, при slow network? Хороший acceptance criteria включает edge cases.
+
 ## Output контракт
 
 - Brief записывается в `<active-project>/journals/<YYYY-MM-DD>-<slug>/brief-<n>.md` (mandatory).
@@ -147,6 +174,12 @@ model: sonnet
   ## 5. Сетка / layout
   ## 6. Переходы
   ## 7. Wording (заголовки, CTA, empty states)
+
+  ## 8. Acceptance criteria (mandatory — для qa-scenario-tester)
+  | Элемент | User action | Expected observable outcome | Failure pattern |
+  |---|---|---|---|
+  | <element 1> | ... | ... | ... |
+  | <element 2> | ... | ... | ... |
 
   ## Implementation план
   <шаги для имплементации после согласования>
