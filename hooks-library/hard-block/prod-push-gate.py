@@ -426,67 +426,8 @@ def main() -> None:
     )
     has_force_approve = bool(FORCE_APPROVE_RE.search(combined)) or has_approve  # если есть обычный approve — force тоже OK
 
-    # === Destructive config detection (катастрофа 13.05 'включила все офферы и в прод') ===
-    # Если в diff есть config/data файлы с большим изменением — требуем семантический approve.
-    destructive_files: list[str] = []
-    destructive_lines = 0
-    try:
-        import subprocess
-        # cwd — извлекаем из самой команды: ищем `git -C <path>` или `cd X && git push`
-        cwd = None
-        m_c = re.search(r'\bgit\s+-C\s+(\S+)', cmd)
-        if m_c:
-            cwd = os.path.expanduser(m_c.group(1).strip('"\''))
-        else:
-            m_cd = re.search(r'\bcd\s+(\S+?)\s*&&', cmd)
-            if m_cd:
-                cwd = os.path.expanduser(m_cd.group(1).strip('"\''))
-            else:
-                cwd = data.get('cwd') or os.getcwd()
-        diff_out = subprocess.run(
-            ['git', 'diff', '--stat', 'origin/HEAD..HEAD'],
-            capture_output=True, text=True, timeout=5,
-            cwd=cwd,
-        )
-        if diff_out.returncode == 0:
-            stat_text = diff_out.stdout
-            # Жёсткий destructive patterns — только реально опасные конфиги прода,
-            # не universal слова типа 'settings.json'.
-            destructive_patterns = re.compile(
-                r'(showcase|vitrina|витрин|partner.*routes?|partner.*config|'
-                r'pricing|commission|комисси|api.key|webhook|'
-                r'feature.flag|toggle.config|migrations?/\d+_|'
-                r'auth.*config|production.*\.(json|yml|yaml|toml))',
-                re.IGNORECASE,
-            )
-            # Skip files обычно безопасные (тесты, docs, kit, hooks)
-            safe_patterns = re.compile(
-                r'(/tests?/|/docs?/|/journals?/|claude-code-kit|claude-hooks|'
-                r'\.md$|README|CHANGELOG|INSTALL|/installer/|/agents-library/|'
-                r'/hooks-library/|/vault-template/|/skills/)',
-                re.IGNORECASE,
-            )
-            for ln in stat_text.splitlines():
-                if '|' not in ln:
-                    continue
-                fname = ln.strip().split('|')[0].strip()
-                if safe_patterns.search(fname):
-                    continue
-                if destructive_patterns.search(fname):
-                    destructive_files.append(fname)
-                    m_line = re.search(r'\|\s*(\d+)', ln)
-                    if m_line:
-                        destructive_lines += int(m_line.group(1))
-    except Exception:
-        pass
-
-    semantic_approve_re = re.compile(
-        r'(семантик[аи]|это\s+правильно|правильное\s+изменение|'
-        r'ок\s+включа|ок\s+(меня|изменя)|подтверждаю\s+изменение|'
-        r'я\s+понимаю\s+(что|как)|осознанно)',
-        re.IGNORECASE,
-    )
-    has_semantic_approve = bool(semantic_approve_re.search(combined))
+    # Pass T: destructive config detection + semantic approve полностью удалены
+    # (overengineering). Оставлен только обычный approve check + UI review check.
 
     # Решение
     blocked = False
