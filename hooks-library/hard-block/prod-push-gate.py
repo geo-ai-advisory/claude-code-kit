@@ -92,6 +92,30 @@ APPROVE_PHRASES = [
     r'\bапрувлю\b',
     r'\bапрувнуто\b',
     r'\bапрувлен\b',
+    # «кати / закатывай» — типовые русские
+    r'\bкати(?:те)?\b',
+    r'\bкатим\b',
+    r'\bнакати(?:те)?\b',
+    r'\bнакатим\b',
+    r'\bзакат(?:ывай|и|ить|ай|ите|им)\b',
+    r'\bзакатываем\b',
+    r'\bзакатили\b',
+    # «жми / дави / погнали / поехали» — командные одобрения
+    r'\bжми\b',
+    r'\bжмём\b',
+    r'\bжмёт\b',
+    r'\bдави\b',
+    r'\bдавим\b',
+    r'\bпогнали\b',
+    r'\bпоехали\b',
+    r'\bвперёд\b',
+    r'\bвперед\b',
+    r'\bдавай\s+(уже|кати|пуш|деплой|выкат|залив|залей)\b',
+    # English variants для completeness
+    r'\bship\b',
+    r'\bship\s+it\b',
+    r'\broll\s+(it\s+)?out\b',
+    r'\blet[\'’]s\s+(go|ship|deploy|push)\b',
     # Английский
     r'\bapprove\s+push\b',
     r'\bapproved\b',
@@ -345,8 +369,7 @@ def main() -> None:
     except Exception:
         pass
 
-    # Soft approve regex — короткие фразы согласия которые
-    # пользователь реально пишет в работе («да», «ок», «делай», «пушь», «залей», и т.д.)
+    # Soft approve — короткие фразы согласия.
     SOFT_APPROVE = re.compile(
         r'(?:^|\s|[.,!?])(да|ок|ага|давай|пуш(?:ь|и|ай)?|залей|выкатывай|деплой|'
         r'клад[ьи]|удали|чин[иь]|fix|push|ship|merge|lgtm|апрув|approve|'
@@ -354,7 +377,53 @@ def main() -> None:
         re.IGNORECASE,
     )
 
-    has_approve = bool(APPROVE_RE.search(combined)) or bool(SOFT_APPROVE.search(combined))
+    # Fuzzy approve — широкий императив-детект. Покрывает «миллиард фраз»:
+    # «закатывай в прод», «кати в прод», «жми кнопку», «давай уже», «накати»,
+    # «полетели», «отправь», «выпускай», «отдавай», «edu», «дави», и т.д.
+    # Логика: ищем ИМПЕРАТИВ ДЕЙСТВИЯ + контекст про push/prod/выкат,
+    # отбрасываем если есть negation в этом же prompt'е (не пушь, стоп, подожди).
+    FUZZY_IMPERATIVE = re.compile(
+        # Императивные глаголы (русск + англ)
+        r'\b(?:'
+        r'кати(?:те)?|катим|закат(?:ывай|ывайте|и|ить|им|ите|ай|ишь)|закатим|накат(?:и|ить|им|ывай|ай)|'
+        r'жми(?:те)?|дави(?:те)?|жмём|давим|'
+        r'пуш(?:ь|и|им|ай|ните|ните|ила)?|push(?:ing|ed|ed\s+it)?|'
+        r'выкат(?:ывай|и|ить|ите|ишь|ка|ываем|ил|ила)|выпускай|'
+        r'деплой(?:те|им|ить|ил|нул)?|deploy(?:ing|ed|ment)?|'
+        r'залей|залить|зали(?:вай|вайте|ваем)|залив|'
+        r'отдавай|отдай|отправляй|отправь|шли|шлём|'
+        r'полетел[аои]?|поехали|погнали|едем|идём|идем|вперёд|вперед|'
+        r'мерж(?:ь|им|ить|и|ните)?|merge(?:d|s|\s+it)?|'
+        r'ship(?:\s+it|ping|ped)?|'
+        r'(?:roll|let[\'’]s)\s+(?:it\s+)?(?:out|go|ship|deploy|push)|'
+        r'(?:approve|апрувь?|апрувим|апрувь?те|апрувите)|'
+        r'lgtm|fine|fine\s+by\s+me|sure|yes|yep|yeah|aye|ага|угу|конечно|давай(?:те)?'
+        r')\b',
+        re.IGNORECASE,
+    )
+
+    # Negation lookahead — если в свежем prompt есть «не / стоп / подожди» — НЕ считать approve
+    HAS_NEGATION = re.compile(
+        r'\b(?:не\s+(?:пушь|push|пуш|кати|закатывай|деплой|выкатывай|залив|жми|отправляй)|'
+        r'стоп\b|стой\b|подожди|wait|stop\b|hold\b|cancel|отмена|отменяй|'
+        r'нет\s+(?:пуш|push|кати)|don\'?t\s+push|не\s+надо)',
+        re.IGNORECASE,
+    )
+
+    # Запрос-вопрос — тоже не approve («можно пушить?», «выкатываем?»)
+    LAST_PROMPT_IS_QUESTION = combined.rstrip().endswith('?')
+
+    fuzzy_approved = (
+        bool(FUZZY_IMPERATIVE.search(combined))
+        and not bool(HAS_NEGATION.search(combined))
+        and not LAST_PROMPT_IS_QUESTION
+    )
+
+    has_approve = (
+        bool(APPROVE_RE.search(combined))
+        or bool(SOFT_APPROVE.search(combined))
+        or fuzzy_approved
+    )
     has_force_approve = bool(FORCE_APPROVE_RE.search(combined)) or has_approve  # если есть обычный approve — force тоже OK
 
     # === Destructive config detection (катастрофа 13.05 'включила все офферы и в прод') ===
