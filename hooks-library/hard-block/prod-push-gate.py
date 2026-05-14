@@ -357,6 +357,68 @@ def main() -> None:
     has_approve = bool(APPROVE_RE.search(combined)) or bool(SOFT_APPROVE.search(combined))
     has_force_approve = bool(FORCE_APPROVE_RE.search(combined)) or has_approve  # если есть обычный approve — force тоже OK
 
+    # === Destructive config detection (катастрофа 13.05 'включила все офферы и в прод') ===
+    # Если в diff есть config/data файлы с большим изменением — требуем семантический approve.
+    destructive_files: list[str] = []
+    destructive_lines = 0
+    try:
+        import subprocess
+        # cwd — извлекаем из самой команды: ищем `git -C <path>` или `cd X && git push`
+        cwd = None
+        m_c = re.search(r'\bgit\s+-C\s+(\S+)', cmd)
+        if m_c:
+            cwd = os.path.expanduser(m_c.group(1).strip('"\''))
+        else:
+            m_cd = re.search(r'\bcd\s+(\S+?)\s*&&', cmd)
+            if m_cd:
+                cwd = os.path.expanduser(m_cd.group(1).strip('"\''))
+            else:
+                cwd = data.get('cwd') or os.getcwd()
+        diff_out = subprocess.run(
+            ['git', 'diff', '--stat', 'origin/HEAD..HEAD'],
+            capture_output=True, text=True, timeout=5,
+            cwd=cwd,
+        )
+        if diff_out.returncode == 0:
+            stat_text = diff_out.stdout
+            # Жёсткий destructive patterns — только реально опасные конфиги прода,
+            # не universal слова типа 'settings.json'.
+            destructive_patterns = re.compile(
+                r'(showcase|vitrina|витрин|partner.*routes?|partner.*config|'
+                r'pricing|commission|комисси|api.key|webhook|'
+                r'feature.flag|toggle.config|migrations?/\d+_|'
+                r'auth.*config|production.*\.(json|yml|yaml|toml))',
+                re.IGNORECASE,
+            )
+            # Skip files обычно безопасные (тесты, docs, kit, hooks)
+            safe_patterns = re.compile(
+                r'(/tests?/|/docs?/|/journals?/|claude-code-kit|claude-hooks|'
+                r'\.md$|README|CHANGELOG|INSTALL|/installer/|/agents-library/|'
+                r'/hooks-library/|/vault-template/|/skills/)',
+                re.IGNORECASE,
+            )
+            for ln in stat_text.splitlines():
+                if '|' not in ln:
+                    continue
+                fname = ln.strip().split('|')[0].strip()
+                if safe_patterns.search(fname):
+                    continue
+                if destructive_patterns.search(fname):
+                    destructive_files.append(fname)
+                    m_line = re.search(r'\|\s*(\d+)', ln)
+                    if m_line:
+                        destructive_lines += int(m_line.group(1))
+    except Exception:
+        pass
+
+    semantic_approve_re = re.compile(
+        r'(семантик[аи]|это\s+правильно|правильное\s+изменение|'
+        r'ок\s+включа|ок\s+(меня|изменя)|подтверждаю\s+изменение|'
+        r'я\s+понимаю\s+(что|как)|осознанно)',
+        re.IGNORECASE,
+    )
+    has_semantic_approve = bool(semantic_approve_re.search(combined))
+
     # Решение
     blocked = False
     reason_lines: list[str] = []
@@ -385,6 +447,15 @@ def main() -> None:
             '(0 Task ui-quality-reviewer/qa-scenario-tester и 0 browser_click тестов)'
         )
 
+    # Destructive config check — требуем семантический approve
+    if destructive_files and destructive_lines >= 5 and not has_semantic_approve:
+        blocked = True
+        files_summary = ', '.join(destructive_files[:5])
+        reason_lines.append(
+            f'DESTRUCTIVE CONFIG: {len(destructive_files)} файлов ({files_summary}), '
+            f'{destructive_lines}+ строк — нужен **семантический approve** не только push approve'
+        )
+
     if not blocked:
         sys.exit(0)
 
@@ -407,6 +478,35 @@ def main() -> None:
             'Для --force / --force-with-lease ДОПОЛНИТЕЛЬНО нужно:',
             '  «force ок», «можно force», «знаю про force», «осознанно force»',
         ]
+    # Destructive config block — отдельный раздел
+    if destructive_files and destructive_lines >= 5 and not has_semantic_approve:
+        msg_parts += [
+            '',
+            f'🔥 DESTRUCTIVE PROD CONFIG CHANGE:',
+            f'  файлы: {", ".join(destructive_files[:5])}',
+            f'  строк изменено: {destructive_lines}',
+            '',
+            'Это не code change — это config который меняет ПОВЕДЕНИЕ прода для users.',
+            'Approve на push ≠ approve на семантику изменения.',
+            '',
+            'ТРЕБУЕТСЯ ОТ ТЕБЯ (модель) ПЕРЕД PUSH:',
+            '  1. Показать пользователю seman tic diff в human terms:',
+            '     "после push в проде станет: <список изменений в поведении>"',
+            '  2. Дождаться явного approve на СЕМАНТИКУ (не просто "ок"):',
+            '     - «семантика верная»',
+            '     - «правильное изменение»',
+            '     - «ок включаем все 18 офферов»',
+            '     - «я понимаю что меняется»',
+            '     - «осознанно push»',
+            '  3. Только потом push',
+            '',
+            'Реальная катастрофа (13.05.2026):',
+            '  Модель включила все офферы в showcase config, push approved пользователем,',
+            '  в прод улетела кашевая витрина. Семантический approve бы поймал.',
+            '',
+            'См. wiki/concepts/destructive-prod-changes.md',
+        ]
+
     # UI review block — отдельный раздел
     if ui_edits_recent >= 1 and ui_review_recent == 0 and qa_click_recent == 0 and not has_ui_bypass:
         msg_parts += [
