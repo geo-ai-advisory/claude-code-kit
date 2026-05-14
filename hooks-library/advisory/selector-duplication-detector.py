@@ -213,7 +213,7 @@ def main():
         lines.append("  3. Заменить все inline-рендеры на вызов компонента")
         lines.append("")
 
-    lines.append("⛔ НЕ говорить «готово» пока не унифицировано.")
+    lines.append("💡 не торопись говорить «готово» пока не унифицировано.")
 
     msg = "\n".join(lines)
     if not _should_emit(data.get("session_id", "") if isinstance(data, dict) else "", "selector-duplication-detector", msg[:300] if "msg" in dir() else str(locals().get("msg", ""))[:300]):

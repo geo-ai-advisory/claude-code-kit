@@ -291,11 +291,11 @@ def main():
     # чтобы работа не вставала навсегда.
     block_strikes = 0
     for line in lines:
-        if 'BLOCKED: Edit на UI-файле' in line or 'BRIEF NEEDED' in line:
+        if 'РЕКОМЕНДАЦИЯ: Edit на UI-файле' in line or 'BRIEF NEEDED' in line:
             block_strikes += 1
     degraded = block_strikes >= 3
 
-    # Не fix-mode — HARD BLOCK (или DEGRADED HINT после 3 strikes).
+    # Не fix-mode — HARD NOTE (или DEGRADED HINT после 3 strikes).
     # Pass I: проверяет brief И screen-spec отдельно.
     missing = []
     if brief_signals == 0:
@@ -325,7 +325,7 @@ def main():
 
     # Pass L (2026-05-12): hooks НЕ блокируют. Только hint.
     # Пользователь явно сказал «полный беспредел так работать нельзя» —
-    # hard blocks мешают работе. brief/screen-spec теперь рекомендация, не запрет.
+    # soft hints мешают работе. brief/screen-spec теперь рекомендация, не запрет.
     hint = (
         f"💡 RECOMMENDATION для UI-файла {fname}: рекомендуется brief + screen-spec.\n"
         f"Не хватает: {missing_str}\n\n"

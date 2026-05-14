@@ -104,7 +104,7 @@ msg = (
     + '\n'.join(f'  - {x}' for x in issues)
     + '\n\nДЕЙСТВИЯ: 1) исправить wikilinks если broken; '
     '2) для проверки числовой консистентности (sum-detail, cross-section) - делегировать consistency-checker subagent. '
-    'НЕ публиковать пока не разобрано.'
+    'не публикуй пока не разобрано.'
 )
 if not _should_emit(data.get("session_id", "") if isinstance(data, dict) else "", "consistency-check", msg[:300] if "msg" in dir() else str(locals().get("msg", ""))[:300]):
     _sys.exit(0)

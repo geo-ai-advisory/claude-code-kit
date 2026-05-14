@@ -227,13 +227,13 @@ def analyse_after(events: list, start_idx: int):
 
 def build_block_reason(edits: int, clicks: int, qa: int, claim_phrase: str, edited_files: list) -> str:
     head = (
-        '\U0001F6D1 BLOCKED: claim '
+        '\U0001F6D1 РЕКОМЕНДАЦИЯ: claim '
         + (f"'{claim_phrase}' " if claim_phrase else '')
         + 'без видимых тестовых кликов в transcript. '
         f'Production edits: {edits}. Click tests: {clicks}. QA agent invocations: {qa}.'
     )
     body = (
-        ' ОБЯЗАТЕЛЬНО провести интеграционный тест: '
+        ' рекомендуется провести интеграционный тест: '
         '(1) browser_navigate на изменённую страницу, '
         '(2) browser_click на изменённый селектор, '
         '(3) browser_evaluate проверка нового state, '

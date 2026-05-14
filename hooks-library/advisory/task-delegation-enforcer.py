@@ -7,7 +7,7 @@ task-delegation-enforcer.py - PreToolUse Edit|Write hook.
 ui-design-architect) — гарантирует что модель не игнорирует ревью.
 
 Уровни:
-  cumulative_ui_edits >= 5 AND ui_review_tasks == 0  → HARD BLOCK (continue:false)
+  cumulative_ui_edits >= 5 AND ui_review_tasks == 0  → HARD NOTE (continue:false)
   cumulative_ui_edits >= 3 AND ui_review_tasks == 0  → loud hint (additionalContext)
 
 Зачем: диагностика соседней сессии 64052142 показала 34 Edit'а на dashboard/wwwroot
@@ -263,7 +263,7 @@ def main() -> None:
         hint = (
             f"⚠️ UI-REVIEW NEEDED: уже {ui_edits} UI-Edit'ов без subagent ревью.\n"
             f"Файлы: {files_str}\n"
-            "Ещё 2 правки — и сработает hard block.\n"
+            "Ещё 2 правки — и сработает soft hint.\n"
             "ВЫЗОВИ Task(ui-quality-reviewer) ИЛИ Task(qa-scenario-tester) СЕЙЧАС "
             "до следующего Edit. Не «прошёлся глазами», а реальный subagent через Task tool."
         )
