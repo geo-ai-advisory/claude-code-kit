@@ -249,9 +249,9 @@ def main() -> None:
     # Pass L (2026-05-12): hook больше НЕ блокирует. Только hint после 5+ UI-edits.
     if ui_edits >= 5 and ui_review_tasks == 0:
         hint = (
-            f"💡 RECOMMENDATION: {ui_edits} UI-Edit'ов без UI-review subagent.\n"
+            f"RECOMMENDATION: {ui_edits} UI-Edit'ов без UI-review subagent.\n"
             f"Файлы: {files_str}\n\n"
-            "Рекомендуется перед следующим крупным block правок вызвать:\n"
+            "optional: перед следующим крупным block правок вызвать:\n"
             "  Task(subagent_type='general-purpose', description='UI review', "
             f"prompt='ui-quality-reviewer для {files_str}')\n\n"
             "Это не блок — продолжай если уверен. Просто напоминание чтобы не пропустить ревью."
@@ -267,10 +267,10 @@ def main() -> None:
     # Уровень 1: LOUD HINT после 3 UI-edits без UI-review
     if ui_edits >= 3 and ui_review_tasks == 0:
         hint = (
-            f"⚠️ UI-REVIEW NEEDED: уже {ui_edits} UI-Edit'ов без subagent ревью.\n"
+            f"⚠️ UI-REVIEW note: уже {ui_edits} UI-Edit'ов без subagent ревью.\n"
             f"Файлы: {files_str}\n"
             "Ещё 2 правки — и сработает soft hint.\n"
-            "ВЫЗОВИ Task(ui-quality-reviewer) ИЛИ Task(qa-scenario-tester) СЕЙЧАС "
+            "ВЫЗОВИ Task(ui-quality-reviewer) ИЛИ Task(qa-scenario-tester) "
             "до следующего Edit. Не «прошёлся глазами», а реальный subagent через Task tool."
         )
         print(json.dumps({

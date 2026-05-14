@@ -233,7 +233,7 @@ def analyse_after(events: list, start_idx: int):
 
 def build_block_reason(edits: int, clicks: int, qa: int, claim_phrase: str, edited_files: list) -> str:
     head = (
-        '\U0001F6D1 РЕКОМЕНДАЦИЯ: claim '
+        '\U0001F6D1 note: claim '
         + (f"'{claim_phrase}' " if claim_phrase else '')
         + 'без видимых тестовых кликов в transcript. '
         f'Production edits: {edits}. Click tests: {clicks}. QA agent invocations: {qa}.'
@@ -337,10 +337,10 @@ def main() -> None:
     # Вместо decision:block — systemMessage + additionalContext (advisory).
     # Пользователь явно сказал «полный беспредел» — work не должна стоять.
     out = {
-        'systemMessage': '💡 ' + block_reason,
+        'systemMessage': '' + block_reason,
         'hookSpecificOutput': {
             'hookEventName': 'Stop',
-            'additionalContext': '💡 ' + block_reason,
+            'additionalContext': '' + block_reason,
         },
     }
     print(json.dumps(out, ensure_ascii=False))

@@ -181,7 +181,7 @@ def main():
     lines = []
     if duplicates:
         lines += [
-            f"🔁 КОПИПАСТА ОБНАРУЖЕНА в {os.path.basename(path)}:",
+            f"copy-paste detected в {os.path.basename(path)}:",
             "",
         ]
         for name, files in duplicates[:5]:
@@ -192,7 +192,7 @@ def main():
         lines.append("")
         lines.append("Нарушает компонентную разработку. Фикс на одной странице не работает на других.")
         lines.append("")
-        lines.append("ДЕЙСТВИЕ: вынеси в общий модуль:")
+        lines.append("consider extracting в общий модуль:")
         lines.append("  - dashboard/wwwroot/static/components/<name>.js")
         lines.append("  - подключи через <script src=...> на всех страницах")
         lines.append("")
@@ -202,7 +202,7 @@ def main():
             lines.append("---")
             lines.append("")
         lines += [
-            f"🎭 РАЗНЫЕ ВИЗУАЛЫ ОДНОЙ ENTITY в {os.path.basename(path)}:",
+            f"entity rendered differently в {os.path.basename(path)}:",
             "",
         ]
         for ent, pats in entity_visual_dupes[:4]:
@@ -213,13 +213,13 @@ def main():
         lines.append("Нарушает one-entity-one-renderer principle (см. wiki/concepts/component-reuse-discipline.md).")
         lines.append("Пользователь увидит несогласованный визуал: «звезда базовый тут, полный порядок там».")
         lines.append("")
-        lines.append("ДЕЙСТВИЕ:")
+        lines.append("action:")
         lines.append("  1. Вызвать ui-design-architect через Task — пусть сделает Entity reuse audit")
         lines.append("  2. Вынести entity в единый компонент в components/<entity>-renderer.js")
         lines.append("  3. Заменить все inline-рендеры на вызов компонента")
         lines.append("")
 
-    lines.append("💡 не торопись говорить «готово» пока не унифицировано.")
+    lines.append("не торопись говорить «готово» пока не унифицировано.")
 
     msg = "\n".join(lines)
     if not _should_emit(data.get("session_id", "") if isinstance(data, dict) else "", "selector-duplication-detector", msg[:300] if "msg" in dir() else str(locals().get("msg", ""))[:300]):

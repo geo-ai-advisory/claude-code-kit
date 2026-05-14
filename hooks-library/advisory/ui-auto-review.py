@@ -63,9 +63,9 @@ if inline_styles > 5:
 if not issues:
     sys.exit(0)
 msg = (
-    f'AUTO UI-REVIEW для {os.path.basename(path)}: найдено {len(issues)} проблем(ы):\n'
+    f'ui-review для {os.path.basename(path)}: найдено {len(issues)} проблем(ы):\n'
     + '\n'.join(f'  - {x}' for x in issues)
-    + '\n\nДЕЙСТВИЯ: 1) исправь перечисленное прямо сейчас; '
+    + '\n\naction: исправь перечисленное прямо сейчас; '
     'или 2) если задача сложнее - делегируй ui-quality-reviewer subagent для полной проверки 6 категорий и фиксов. '
     'не торопись отправлять пользователю "готово" пока не исправлено.'
 )

@@ -14,5 +14,5 @@ h = tool_input.get('height') or 0
 if (isinstance(w, int) and w > 1600) or (isinstance(h, int) and h > 1600):
     print(json.dumps({
         'continue': False,
-        'stopReason': f'РЕКОМЕНДАЦИЯ: viewport {w}x{h} слишком большой — после скрина сессия упадёт на >2000px. Использовать <= 1400x900.'
+        'stopReason': f'note: viewport {w}x{h} слишком большой — после скрина сессия упадёт на >2000px. Использовать <= 1400x900.'
     }, ensure_ascii=False))

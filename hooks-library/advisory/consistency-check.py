@@ -106,9 +106,9 @@ if not issues:
     sys.exit(0)
 
 msg = (
-    f'AUTO CONSISTENCY-CHECK для {os.path.basename(path)}: найдено {len(issues)} потенциальных проблем(ы):\n'
+    f'consistency-check для {os.path.basename(path)}: найдено {len(issues)} потенциальных проблем(ы):\n'
     + '\n'.join(f'  - {x}' for x in issues)
-    + '\n\nДЕЙСТВИЯ: 1) исправить wikilinks если broken; '
+    + '\n\naction: исправить wikilinks если broken; '
     '2) для проверки числовой консистентности (sum-detail, cross-section) - делегировать consistency-checker subagent. '
     'не публикуй пока не разобрано.'
 )

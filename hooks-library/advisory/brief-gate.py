@@ -280,8 +280,8 @@ def main():
     if fix_mode:
         # Мелкая правка — hint, не блок
         hint = (
-            f"FIX-MODE для {fname}: пользователь объявил мелкую правку. "
-            "Brief не требуется. Продолжай Edit, но СТРОГО держи scope — не делай "
+            f"fix-mode for {fname}: пользователь объявил мелкую правку. "
+            "Brief не suggestion. Продолжай Edit, но СТРОГО держи scope — не делай "
             "рефакторинг соседнего кода (см. minimal-change-engineer pattern)."
         )
         print(json.dumps({
@@ -297,11 +297,11 @@ def main():
     # чтобы работа не вставала навсегда.
     block_strikes = 0
     for line in lines:
-        if 'РЕКОМЕНДАЦИЯ: Edit на UI-файле' in line or 'BRIEF NEEDED' in line:
+        if 'note: Edit на UI-файле' in line or 'brief suggestion' in line:
             block_strikes += 1
     degraded = block_strikes >= 3
 
-    # Не fix-mode — HARD NOTE (или DEGRADED HINT после 3 strikes).
+    # Не fix-mode — HARD NOTE (или note (degraded) HINT после 3 strikes).
     # Pass I: проверяет brief И screen-spec отдельно.
     missing = []
     if brief_signals == 0:
@@ -333,7 +333,7 @@ def main():
     # Пользователь явно сказал «полный беспредел так работать нельзя» —
     # soft hints мешают работе. brief/screen-spec теперь рекомендация, не запрет.
     hint = (
-        f"💡 RECOMMENDATION для UI-файла {fname}: рекомендуется brief + screen-spec.\n"
+        f"RECOMMENDATION для UI-файла {fname}: рекомендуется brief + screen-spec.\n"
         f"Не хватает: {missing_str}\n\n"
         "Если новая фича / новый экран — лучше сначала:\n"
         f"{next_steps_str}\n\n"

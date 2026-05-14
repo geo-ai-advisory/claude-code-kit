@@ -462,7 +462,7 @@ def main() -> None:
     # Формируем stopReason
     target = extract_branch_target(cmd)
     msg_parts = [
-        '\U0001F6D1 PROD PUSH РЕКОМЕНДАЦИЯ — ' + '; '.join(reason_lines) + '.',
+        '\U0001F6D1 PROD PUSH note — ' + '; '.join(reason_lines) + '.',
         '',
         f'Detected: {label}',
         f'Branch/target: {target}',
@@ -482,14 +482,14 @@ def main() -> None:
     if destructive_files and destructive_lines >= 5 and not has_semantic_approve:
         msg_parts += [
             '',
-            f'💡 DESTRUCTIVE PROD CONFIG CHANGE:',
+            f'DESTRUCTIVE PROD CONFIG CHANGE:',
             f'  файлы: {", ".join(destructive_files[:5])}',
             f'  строк изменено: {destructive_lines}',
             '',
             'Это не code change — это config который меняет ПОВЕДЕНИЕ прода для users.',
             'Approve на push ≠ approve на семантику изменения.',
             '',
-            'Рекомендуется ОТ ТЕБЯ (модель) ПЕРЕД PUSH:',
+            'optional: ОТ ТЕБЯ (модель) ПЕРЕД PUSH:',
             '  1. Показать пользователю seman tic diff в human terms:',
             '     "после push в проде станет: <список изменений в поведении>"',
             '  2. Дождаться явного approve на СЕМАНТИКУ (не просто "ок"):',
@@ -511,7 +511,7 @@ def main() -> None:
     if ui_edits_recent >= 1 and ui_review_recent == 0 and qa_click_recent == 0 and not has_ui_bypass:
         msg_parts += [
             '',
-            f'🎨 UI-EDIT БЕЗ РЕВЬЮ ({ui_edits_recent} файлов изменено):',
+            f'UI-EDIT БЕЗ РЕВЬЮ ({ui_edits_recent} файлов изменено):',
             '  - 0 Task(ui-quality-reviewer / qa-scenario-tester / ui-design-architect)',
             '  - 0 browser_click / preview_click тестов',
             '',
