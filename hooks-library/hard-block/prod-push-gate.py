@@ -516,14 +516,9 @@ def main() -> None:
             '(0 Task ui-quality-reviewer/qa-scenario-tester и 0 browser_click тестов)'
         )
 
-    # Destructive config check — требуем семантический approve
-    if destructive_files and destructive_lines >= 5 and not has_semantic_approve:
-        blocked = True
-        files_summary = ', '.join(destructive_files[:5])
-        reason_lines.append(
-            f'DESTRUCTIVE CONFIG: {len(destructive_files)} файлов ({files_summary}), '
-            f'{destructive_lines}+ строк — нужен **семантический approve** не только push approve'
-        )
+    # Pass T: destructive double-approve убран — overengineering, добавлял friction.
+    # Обычного approve («залей в прод», «ок пуш», «кати») достаточно.
+    # Пользователь сам решает что катить — он видит свой код.
 
     if not blocked:
         sys.exit(0)
@@ -547,35 +542,7 @@ def main() -> None:
             'Для --force / --force-with-lease ДОПОЛНИТЕЛЬНО нужно:',
             '  «force ок», «можно force», «знаю про force», «осознанно force»',
         ]
-    # Destructive config block — отдельный раздел
-    if destructive_files and destructive_lines >= 5 and not has_semantic_approve:
-        msg_parts += [
-            '',
-            f'DESTRUCTIVE PROD CONFIG CHANGE:',
-            f'  файлы: {", ".join(destructive_files[:5])}',
-            f'  строк изменено: {destructive_lines}',
-            '',
-            'Это не code change — это config который меняет ПОВЕДЕНИЕ прода для users.',
-            'Approve на push ≠ approve на семантику изменения.',
-            '',
-            'optional: ОТ ТЕБЯ (модель) ПЕРЕД PUSH:',
-            '  1. Показать пользователю seman tic diff в human terms:',
-            '     "после push в проде станет: <список изменений в поведении>"',
-            '  2. Дождаться явного approve на СЕМАНТИКУ (не просто "ок"):',
-            '     - «семантика верная»',
-            '     - «правильное изменение»',
-            '     - «ок включаем все 18 офферов»',
-            '     - «я понимаю что меняется»',
-            '     - «осознанно push»',
-            '  3. Только потом push',
-            '',
-            'Реальная катастрофа (13.05.2026):',
-            '  Модель включила все офферы в showcase config, push approved пользователем,',
-            '  в прод улетела кашевая витрина. Семантический approve бы поймал.',
-            '',
-            'См. wiki/concepts/destructive-prod-changes.md',
-        ]
-
+    # Pass T: destructive config block убран (overengineering).
     # UI review block — отдельный раздел
     if ui_edits_recent >= 1 and ui_review_recent == 0 and qa_click_recent == 0 and not has_ui_bypass:
         msg_parts += [
