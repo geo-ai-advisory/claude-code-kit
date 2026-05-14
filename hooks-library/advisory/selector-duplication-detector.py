@@ -8,6 +8,16 @@ selectors with partner|filter|status|select keywords. If the same name is
 present in another dashboard file, emits an additionalContext warning so the
 agent stops the "fix-on-one-page-only" pattern.
 """
+
+# Throttle: silent if same hint repeats in session (anti hook-fatigue)
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+try:
+    from _throttle import should_emit as _should_emit
+except Exception:
+    def _should_emit(*a, **kw):
+        return True
+
 import sys, json, os, re, glob
 
 
@@ -206,6 +216,8 @@ def main():
     lines.append("⛔ НЕ говорить «готово» пока не унифицировано.")
 
     msg = "\n".join(lines)
+    if not _should_emit(data.get("session_id", "") if isinstance(data, dict) else "", "selector-duplication-detector", msg[:300] if "msg" in dir() else str(locals().get("msg", ""))[:300]):
+        _sys.exit(0)
     print(json.dumps({
         "systemMessage": msg,
         "hookSpecificOutput": {

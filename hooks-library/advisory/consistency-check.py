@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+# Throttle: silent if same hint repeats in session (anti hook-fatigue)
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+try:
+    from _throttle import should_emit as _should_emit
+except Exception:
+    def _should_emit(*a, **kw):
+        return True
+
 """PostToolUse hook для Write|Edit — consistency-check для HTML/MD reports в <your-workspace>."""
 import sys
 import json
@@ -96,6 +106,8 @@ msg = (
     '2) для проверки числовой консистентности (sum-detail, cross-section) - делегировать consistency-checker subagent. '
     'НЕ публиковать пока не разобрано.'
 )
+if not _should_emit(data.get("session_id", "") if isinstance(data, dict) else "", "consistency-check", msg[:300] if "msg" in dir() else str(locals().get("msg", ""))[:300]):
+    _sys.exit(0)
 print(json.dumps({
     'systemMessage': msg,
     'hookSpecificOutput': {

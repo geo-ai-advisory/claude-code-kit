@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+# Throttle: silent if same hint repeats in session (anti hook-fatigue)
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+try:
+    from _throttle import should_emit as _should_emit
+except Exception:
+    def _should_emit(*a, **kw):
+        return True
+
 """PostToolUse hook для Write|Edit — auto UI-review для HTML/CSS/SCSS/TSX/JSX."""
 import sys
 import json
@@ -53,6 +63,8 @@ msg = (
     'или 2) если задача сложнее - делегируй ui-quality-reviewer subagent для полной проверки 6 категорий и фиксов. '
     'НЕ отправляй пользователю "готово" пока не исправлено.'
 )
+if not _should_emit(data.get("session_id", "") if isinstance(data, dict) else "", "ui-auto-review", msg[:300] if "msg" in dir() else str(locals().get("msg", ""))[:300]):
+    _sys.exit(0)
 print(json.dumps({
     'systemMessage': msg,
     'hookSpecificOutput': {
