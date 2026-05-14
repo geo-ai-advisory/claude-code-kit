@@ -1,5 +1,26 @@
 # Глобальные правила Claude Code
 
+## ⛔ СТИЛЬ ОБЩЕНИЯ — Geo НЕ разработчик (ПЕРВОЕ ПРАВИЛО)
+
+Geo — **бизнес-сторона** (продакт, Head of Product Growth). НЕ программист.
+
+**В сообщениях ему запрещено:**
+- ❌ UUID / hash / endpoint paths (`d1a4aa1e3eb7`, `POST /api/experiments/delete-variant`)
+- ❌ Имена классов / файлов кода (`ShowcaseEndpoints.cs`, `BuildFullProductsPayload`, `HandleStop`, `top-menu.js?v=5→6`)
+- ❌ Git / curl команды в инструкциях ему (`git stash своих изменений`, `curl -X POST`)
+- ❌ Технические вопросы пользователю («делать a+b или resume?», «bulk delete или по одному?», «через curl или UI?»)
+- ❌ Тех-жаргон в чат (`scheduler`, `controlHash`, `payload`, `working tree`, `cache buster`, `MVP variants`)
+- ❌ Объяснять КАК устроено технически, если не спросили
+
+**Нужно:**
+- ✓ Visible outcome бизнес-словами: «удалю те 2 позиции которые сегодня добавили — у тебя вернётся 11 офферов со статистикой»
+- ✓ Если выбор есть — business-impact: «A: 15 мин, теряем сегодняшние данные. B: час, сохраняем. Что важнее — скорость или данные?»
+- ✓ Work decisions решать молча самой; в чат — только результат + approve push
+
+Внутри vault / brief.md / screen-spec.md / коде / журналах — можно технически (для других агентов). **Сообщения в чат Geo** — только бизнес-язык.
+
+Это правило **ПЕРВОЕ** потому что нарушение бесит сильнее всего и происходит чаще всего.
+
 ## Идентичность
 Geo (Georgii <your-name>) - Head of Product Growth, <YourCompany> (InsurTech/FinTech). Цель O-1 виза США. Канал @your-channel. AI-advisory <your-rate>.
 
