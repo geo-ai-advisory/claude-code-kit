@@ -57,7 +57,7 @@
       "mcp__Claude_Preview__*",
       "mcp__obsidian-graph__*",
       "mcp__obsidian__*",
-      "mcp__usedesk__*",
+      "mcp__<your-company>-usedesk__*",
       "mcp__scheduled-tasks__*",
       "mcp__ccd_session__*",
       "mcp__ccd_session_mgmt__*",
@@ -66,7 +66,11 @@
       "mcp__Claude_in_Chrome__*",
       "Write",
       "Edit",
-      "TodoWrite"
+      "TodoWrite",
+      "Write(/Users/<you>/claude-hooks/**)",
+      "Edit(/Users/<you>/claude-hooks/**)",
+      "Write(/Users/<you>/Projects-build/**)",
+      "Edit(/Users/<you>/Projects-build/**)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
@@ -277,6 +281,11 @@
             "type": "command",
             "command": "python3 /Users/<you>/claude-hooks/claim-readiness-validator.py",
             "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/<you>/claude-hooks/delegation-to-user-detector.py",
+            "timeout": 10
           }
         ]
       },
@@ -339,5 +348,9 @@
   "language": "russian",
   "terminalTitleFromRename": false,
   "effortLevel": "high",
-  "theme": "light"
+  "theme": "light",
+  "dangerouslyDisableSandbox": true,
+  "bypassPermissionsModeAcceptanceTimestamp": 1778610049219,
+  "acceptedDangerousModeWarning": true,
+  "hasAcknowledgedAutoApproveWarning": true
 }
