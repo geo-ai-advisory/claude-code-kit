@@ -8,6 +8,12 @@
 этот hook извлекает СУТЬ работы: какие файлы тронуты, какие задачи решены,
 какие открытые вопросы. Если ничего значимого — пропускает.
 """
+
+# Global quiet kill switch — touch ~/claude-hooks/.quiet to silence ALL advisory hooks
+import sys as _sys_q, os as _os_q
+if _os_q.path.exists(_os_q.path.join(_os_q.path.dirname(_os_q.path.abspath(__file__)), '.quiet')):
+    _sys_q.exit(0)
+
 import sys, json, os, re, glob
 from collections import Counter
 from pathlib import Path

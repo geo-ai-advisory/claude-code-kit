@@ -13,6 +13,12 @@ cycle сразу бежит чинить вместо ответа. Резуль
 Pass H / 2026-05-12.
 """
 
+# Global quiet kill switch — touch ~/claude-hooks/.quiet to silence ALL advisory hooks
+import sys as _sys_q, os as _os_q
+if _os_q.path.exists(_os_q.path.join(_os_q.path.dirname(_os_q.path.abspath(__file__)), '.quiet')):
+    _sys_q.exit(0)
+
+
 import sys
 import json
 import os

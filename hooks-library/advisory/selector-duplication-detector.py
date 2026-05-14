@@ -9,6 +9,12 @@ present in another dashboard file, emits an additionalContext warning so the
 agent stops the "fix-on-one-page-only" pattern.
 """
 
+# Global quiet kill switch — touch ~/claude-hooks/.quiet to silence ALL advisory hooks
+import sys as _sys_q, os as _os_q
+if _os_q.path.exists(_os_q.path.join(_os_q.path.dirname(_os_q.path.abspath(__file__)), '.quiet')):
+    _sys_q.exit(0)
+
+
 # Throttle: silent if same hint repeats in session (anti hook-fatigue)
 import sys as _sys, os as _os
 _sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
