@@ -167,11 +167,6 @@
           {
             "type": "command",
             "command": "python3 /Users/<you>/claude-hooks/bash-large-output-warn.py"
-          },
-          {
-            "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/explain-mode-guard.py",
-            "timeout": 10
           }
         ]
       },
