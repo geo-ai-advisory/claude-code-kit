@@ -14,19 +14,19 @@
       "Write(*)",
       "Edit(*)",
       "Write(~/.claude/**)",
-      "Write(/Users/<you>/.claude/**)",
-      "Write(/Users/<you>/.claude/agents/**)",
-      "Write(/Users/<you>/.claude/skills/**)",
-      "Write(/Users/<you>/Library/Mobile Documents/**)",
-      "Write(/Users/<you>/Library/**)",
+      "Write(/Users/via/.claude/**)",
+      "Write(/Users/via/.claude/agents/**)",
+      "Write(/Users/via/.claude/skills/**)",
+      "Write(/Users/via/Library/Mobile Documents/**)",
+      "Write(/Users/via/Library/**)",
       "Write(/private/**)",
       "Write(/tmp/**)",
       "Edit(~/.claude/**)",
-      "Edit(/Users/<you>/.claude/**)",
-      "Edit(/Users/<you>/.claude/agents/**)",
-      "Edit(/Users/<you>/.claude/skills/**)",
-      "Edit(/Users/<you>/Library/Mobile Documents/**)",
-      "Edit(/Users/<you>/Library/**)",
+      "Edit(/Users/via/.claude/**)",
+      "Edit(/Users/via/.claude/agents/**)",
+      "Edit(/Users/via/.claude/skills/**)",
+      "Edit(/Users/via/Library/Mobile Documents/**)",
+      "Edit(/Users/via/Library/**)",
       "Edit(/private/**)",
       "Edit(/tmp/**)",
       "Glob(*)",
@@ -41,7 +41,7 @@
       "WebSearch(*)",
       "mcp__google-workspace__*",
       "mcp__tracker__*",
-      "mcp__<your-db>__*",
+      "mcp__insapp-db__*",
       "mcp__telegram__*",
       "mcp__gitlab__*",
       "mcp__firebase__*",
@@ -57,7 +57,7 @@
       "mcp__Claude_Preview__*",
       "mcp__obsidian-graph__*",
       "mcp__obsidian__*",
-      "mcp__<your-company>-usedesk__*",
+      "mcp__insapp-usedesk__*",
       "mcp__scheduled-tasks__*",
       "mcp__ccd_session__*",
       "mcp__ccd_session_mgmt__*",
@@ -67,20 +67,20 @@
       "Write",
       "Edit",
       "TodoWrite",
-      "Write(/Users/<you>/claude-hooks/**)",
-      "Edit(/Users/<you>/claude-hooks/**)",
-      "Write(/Users/<you>/Projects-build/**)",
-      "Edit(/Users/<you>/Projects-build/**)"
+      "Write(/Users/via/claude-hooks/**)",
+      "Edit(/Users/via/claude-hooks/**)",
+      "Write(/Users/via/Projects-build/**)",
+      "Edit(/Users/via/Projects-build/**)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
-      "/Users/<you>/.claude",
-      "/Users/<you>/.claude/agents",
-      "/Users/<you>/.claude/skills",
-      "/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>",
-      "/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>/.claude",
-      "/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>/.claude/agents",
-      "/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>/Projects",
+      "/Users/via/.claude",
+      "/Users/via/.claude/agents",
+      "/Users/via/.claude/skills",
+      "/Users/via/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/B-project",
+      "/Users/via/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/B-project/.claude",
+      "/Users/via/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/B-project/.claude/agents",
+      "/Users/via/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/B-project/Projects",
       "/tmp"
     ]
   },
@@ -94,7 +94,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/screenshot-fullpage-block.py"
+            "command": "python3 /Users/via/claude-hooks/screenshot-fullpage-block.py"
           }
         ]
       },
@@ -103,7 +103,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/browser-resize-block.py"
+            "command": "python3 /Users/via/claude-hooks/browser-resize-block.py"
           }
         ]
       },
@@ -112,7 +112,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/preview-screenshot-block.py"
+            "command": "python3 /Users/via/claude-hooks/preview-screenshot-block.py"
           }
         ]
       },
@@ -121,7 +121,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/preview-resize-block.py"
+            "command": "python3 /Users/via/claude-hooks/preview-resize-block.py"
           }
         ]
       },
@@ -130,7 +130,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/browser-snapshot-block.py"
+            "command": "python3 /Users/via/claude-hooks/browser-snapshot-block.py"
           }
         ]
       },
@@ -139,7 +139,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/browser-navigate-info.py"
+            "command": "python3 /Users/via/claude-hooks/browser-navigate-info.py"
           }
         ]
       },
@@ -148,25 +148,16 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/browser-evaluate-warn.py"
+            "command": "python3 /Users/via/claude-hooks/browser-evaluate-warn.py"
           }
         ]
       },
       {
-        "matcher": "mcp__<your-db>__(execute|query)",
+        "matcher": "mcp__insapp-db__(execute|query)",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/db-no-limit-warn.py"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/bash-large-output-warn.py"
+            "command": "python3 /Users/via/claude-hooks/db-no-limit-warn.py"
           }
         ]
       },
@@ -175,27 +166,16 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/prod-push-gate.py"
+            "command": "python3 /Users/via/claude-hooks/bash-large-output-warn.py"
           }
         ]
       },
       {
-        "matcher": "Write|Edit",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/brief-gate.py",
-            "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/task-delegation-enforcer.py",
-            "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/explain-mode-guard.py",
-            "timeout": 10
+            "command": "python3 /Users/via/claude-hooks/prod-push-gate.py"
           }
         ]
       }
@@ -206,38 +186,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/vault-frontmatter-check.py"
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/ui-auto-review.py",
-            "timeout": 30,
-            "statusMessage": "UI auto-review (typography/spacing/states/motion)"
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/consistency-check.py",
-            "timeout": 30,
-            "statusMessage": "Consistency auto-check (numbers/dates/wikilinks/sluggable)"
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/selector-duplication-detector.py",
+            "command": "python3 /Users/via/claude-hooks/selector-duplication-detector.py",
             "timeout": 30,
             "statusMessage": "Selector duplication detector"
           }
@@ -248,7 +197,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/mcp-restart-hint.py"
+            "command": "python3 /Users/via/claude-hooks/mcp-restart-hint.py"
           }
         ]
       }
@@ -259,7 +208,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/prompt-orchestration-hint.py"
+            "command": "python3 /Users/via/claude-hooks/prompt-orchestration-hint.py"
           }
         ]
       }
@@ -270,12 +219,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c '\nLOG=\"/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>/Projects/<your-vault>/log.md\"\n[ -f \"$LOG\" ] || exit 0\n\nDATE=$(date +%Y-%m-%d)\nTIME=$(date +%H:%M)\n\nSTDIN=$(cat)\nSESSION_ID=$(echo \"$STDIN\" | jq -r \".session_id // empty\" 2>/dev/null)\n\nif [ -z \"$SESSION_ID\" ]; then\n  printf \"\\n## [%s %s] auto | session ended\\n\" \"$DATE\" \"$TIME\" >> \"$LOG\"\n  exit 0\nfi\n\nJSONL=\"/Users/<you>/.claude/projects/-Users-via-Library-Mobile-Documents-com-apple-CloudDocs-Cursor-cloud-<your-workspace>/${SESSION_ID}.jsonl\"\n\nif [ ! -f \"$JSONL\" ]; then\n  printf \"\\n## [%s %s] auto | session %s ended (no transcript)\\n\" \"$DATE\" \"$TIME\" \"${SESSION_ID:0:8}\" >> \"$LOG\"\n  exit 0\nfi\n\nTOTAL=$(grep -c \"\\\"type\\\":\\\"tool_use\\\"\" \"$JSONL\" 2>/dev/null)\n[ -z \"$TOTAL\" ] && TOTAL=0\n\nif [ \"$TOTAL\" -lt 10 ]; then\n  printf \"\\n## [%s %s] auto | session %s ended (light, %s tools)\\n\" \"$DATE\" \"$TIME\" \"${SESSION_ID:0:8}\" \"$TOTAL\" >> \"$LOG\"\n  exit 0\nfi\n\nTOP_FILES=$(tail -200 \"$JSONL\" 2>/dev/null | jq -rs \"[.[] | .message?.content // []] | map(if type == \\\"array\\\" then . else [] end) | flatten | [.[] | select(type == \\\"object\\\" and .type == \\\"tool_use\\\") | (.input.file_path // .input.path // empty)] | map(select(. != null and . != \\\"\\\")) | reverse | unique | .[:5] | .[] | sub(\\\"^/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>/\\\"; \\\"\\\")\" 2>/dev/null | head -5 | sed \"s|^|  - |\")\n\nTOOL_COUNTS=$(tail -200 \"$JSONL\" 2>/dev/null | jq -rs \"[.[] | .message?.content // []] | map(if type == \\\"array\\\" then . else [] end) | flatten | [.[] | select(type == \\\"object\\\" and .type == \\\"tool_use\\\") | .name] | group_by(.) | map({n: .[0], c: length}) | sort_by(.c) | reverse | .[:5] | map(.n + \\\":\\\" + (.c|tostring)) | join(\\\", \\\")\" 2>/dev/null)\n\nif [ -n \"$TOP_FILES\" ]; then\n  {\n    printf \"\\n## [%s %s] auto | session %s\\n\" \"$DATE\" \"$TIME\" \"${SESSION_ID:0:8}\"\n    printf -- \"- **Files touched (top):**\\n%s\\n\" \"$TOP_FILES\"\n    printf -- \"- **Tools:** %s\\n\" \"$TOOL_COUNTS\"\n    printf -- \"- **Total tool calls:** %s\\n\" \"$TOTAL\"\n    printf -- \"- **TODO:** human review and write proper wiki entry\\n\"\n  } >> \"$LOG\"\nelse\n  printf \"\\n## [%s %s] auto | session %s (%s tools, no file paths)\\n\" \"$DATE\" \"$TIME\" \"${SESSION_ID:0:8}\" \"$TOTAL\" >> \"$LOG\"\nfi\n\nexit 0\n' 2>/dev/null || true"
-          },
-          {
-            "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/claim-readiness-validator.py",
-            "timeout": 15
+            "command": "bash -c '\nLOG=\"/Users/via/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/B-project/Projects/second-brain/log.md\"\n[ -f \"$LOG\" ] || exit 0\n\nDATE=$(date +%Y-%m-%d)\nTIME=$(date +%H:%M)\n\nSTDIN=$(cat)\nSESSION_ID=$(echo \"$STDIN\" | jq -r \".session_id // empty\" 2>/dev/null)\n\nif [ -z \"$SESSION_ID\" ]; then\n  printf \"\\n## [%s %s] auto | session ended\\n\" \"$DATE\" \"$TIME\" >> \"$LOG\"\n  exit 0\nfi\n\nJSONL=\"/Users/via/.claude/projects/-Users-via-Library-Mobile-Documents-com-apple-CloudDocs-Cursor-cloud-B-project/${SESSION_ID}.jsonl\"\n\nif [ ! -f \"$JSONL\" ]; then\n  printf \"\\n## [%s %s] auto | session %s ended (no transcript)\\n\" \"$DATE\" \"$TIME\" \"${SESSION_ID:0:8}\" >> \"$LOG\"\n  exit 0\nfi\n\nTOTAL=$(grep -c \"\\\"type\\\":\\\"tool_use\\\"\" \"$JSONL\" 2>/dev/null)\n[ -z \"$TOTAL\" ] && TOTAL=0\n\nif [ \"$TOTAL\" -lt 10 ]; then\n  printf \"\\n## [%s %s] auto | session %s ended (light, %s tools)\\n\" \"$DATE\" \"$TIME\" \"${SESSION_ID:0:8}\" \"$TOTAL\" >> \"$LOG\"\n  exit 0\nfi\n\nTOP_FILES=$(tail -200 \"$JSONL\" 2>/dev/null | jq -rs \"[.[] | .message?.content // []] | map(if type == \\\"array\\\" then . else [] end) | flatten | [.[] | select(type == \\\"object\\\" and .type == \\\"tool_use\\\") | (.input.file_path // .input.path // empty)] | map(select(. != null and . != \\\"\\\")) | reverse | unique | .[:5] | .[] | sub(\\\"^/Users/via/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/B-project/\\\"; \\\"\\\")\" 2>/dev/null | head -5 | sed \"s|^|  - |\")\n\nTOOL_COUNTS=$(tail -200 \"$JSONL\" 2>/dev/null | jq -rs \"[.[] | .message?.content // []] | map(if type == \\\"array\\\" then . else [] end) | flatten | [.[] | select(type == \\\"object\\\" and .type == \\\"tool_use\\\") | .name] | group_by(.) | map({n: .[0], c: length}) | sort_by(.c) | reverse | .[:5] | map(.n + \\\":\\\" + (.c|tostring)) | join(\\\", \\\")\" 2>/dev/null)\n\nif [ -n \"$TOP_FILES\" ]; then\n  {\n    printf \"\\n## [%s %s] auto | session %s\\n\" \"$DATE\" \"$TIME\" \"${SESSION_ID:0:8}\"\n    printf -- \"- **Files touched (top):**\\n%s\\n\" \"$TOP_FILES\"\n    printf -- \"- **Tools:** %s\\n\" \"$TOOL_COUNTS\"\n    printf -- \"- **Total tool calls:** %s\\n\" \"$TOTAL\"\n    printf -- \"- **TODO:** human review and write proper wiki entry\\n\"\n  } >> \"$LOG\"\nelse\n  printf \"\\n## [%s %s] auto | session %s (%s tools, no file paths)\\n\" \"$DATE\" \"$TIME\" \"${SESSION_ID:0:8}\" \"$TOTAL\" >> \"$LOG\"\nfi\n\nexit 0\n' 2>/dev/null || true"
           }
         ]
       },
@@ -284,7 +228,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/session-auto-summary.py",
+            "command": "python3 /Users/via/claude-hooks/session-auto-summary.py",
             "timeout": 10
           }
         ]
@@ -296,7 +240,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/vault-bootstrap.py",
+            "command": "python3 /Users/via/claude-hooks/vault-bootstrap.py",
             "timeout": 10
           }
         ]
@@ -308,7 +252,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/<you>/claude-hooks/vault-bootstrap.py",
+            "command": "python3 /Users/via/claude-hooks/vault-bootstrap.py",
             "timeout": 10
           }
         ]

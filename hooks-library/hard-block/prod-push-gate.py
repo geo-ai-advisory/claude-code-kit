@@ -208,7 +208,7 @@ def read_recent_user_messages(session_id: str, limit: int = 30) -> list[str]:
     if not session_id:
         return []
 
-    base_dir = '/Users/<you>/.claude/projects/-Users-via-Library-Mobile-Documents-com-apple-CloudDocs-Cursor-cloud-<your-workspace>'
+    base_dir = '/Users/via/.claude/projects/-Users-via-Library-Mobile-Documents-com-apple-CloudDocs-Cursor-cloud-B-project'
     transcript_path = os.path.join(base_dir, f'{session_id}.jsonl')
 
     if not os.path.isfile(transcript_path):
@@ -290,84 +290,7 @@ def main() -> None:
     user_msgs = read_recent_user_messages(session_id, limit=30)
     combined = '\n'.join(user_msgs)
 
-    # === UI review check (после катастрофы 12.05) ===
-    # Если за последний user turn были Edit на UI-файлы (HTML/CSS/JS) — нужен
-    # хотя бы один Task(ui-quality-reviewer) или Task(qa-scenario-tester) или
-    # browser_click тест перед push. Иначе блок «нажал → визуально кривое в прод».
-    ui_edits_recent = 0
-    ui_review_recent = 0
-    qa_click_recent = 0
-    try:
-        transcript_dir = os.path.expanduser(
-            '~/.claude/projects/-Users-via-Library-Mobile-Documents-com-apple-CloudDocs-Cursor-cloud-<your-workspace>'
-        )
-        if not os.path.isdir(transcript_dir):
-            for d in os.listdir(os.path.expanduser('~/.claude/projects/')):
-                transcript_dir = os.path.expanduser(f'~/.claude/projects/{d}')
-                break
-        tp = os.path.join(transcript_dir, f'{session_id}.jsonl')
-        if os.path.isfile(tp):
-            with open(tp, 'r', encoding='utf-8') as f:
-                lines = f.readlines()[-200:]
-            # последний реальный user prompt
-            last_user_idx = -1
-            for i, line in enumerate(lines):
-                try:
-                    ev = json.loads(line)
-                except Exception:
-                    continue
-                if ev.get('type') != 'user' or 'toolUseResult' in ev:
-                    continue
-                msg = ev.get('message') or {}
-                c = msg.get('content')
-                txt = ''
-                if isinstance(c, str):
-                    txt = c
-                elif isinstance(c, list):
-                    for item in c:
-                        if isinstance(item, dict) and item.get('type') == 'text':
-                            txt = item.get('text', '') or ''
-                            break
-                if txt and not txt.startswith(('<task-notification>', '<system-reminder>',
-                                                '<command-name>', '<local-command-stdout>',
-                                                '<bash-stdout>')):
-                    last_user_idx = i
-            if last_user_idx >= 0:
-                ui_ext_re = re.compile(r'\.(html|css|scss|tsx|jsx|js)$', re.IGNORECASE)
-                ui_review_names = {'ui-quality-reviewer', 'qa-scenario-tester',
-                                   'ui-design-architect', 'accessibility-auditor'}
-                for line in lines[last_user_idx + 1:]:
-                    try:
-                        ev = json.loads(line)
-                    except Exception:
-                        continue
-                    if ev.get('type') != 'assistant':
-                        continue
-                    content = (ev.get('message') or {}).get('content') or []
-                    if not isinstance(content, list):
-                        continue
-                    for item in content:
-                        if not isinstance(item, dict):
-                            continue
-                        if item.get('type') != 'tool_use':
-                            continue
-                        name = item.get('name', '') or ''
-                        inp = item.get('input', {}) or {}
-                        if name in ('Edit', 'Write'):
-                            fp = inp.get('file_path', '') or ''
-                            if ui_ext_re.search(fp):
-                                ui_edits_recent += 1
-                        elif name == 'Task':
-                            sub = (inp.get('subagent_type') or '').lower()
-                            desc = (inp.get('description') or '').lower()
-                            prompt = (inp.get('prompt') or '')[:500].lower()
-                            combo = sub + ' ' + desc + ' ' + prompt
-                            if any(r in combo for r in ui_review_names):
-                                ui_review_recent += 1
-                        elif 'click' in name.lower():
-                            qa_click_recent += 1
-    except Exception:
-        pass
+    
 
     # Soft approve — короткие фразы согласия.
     SOFT_APPROVE = re.compile(
@@ -411,7 +334,7 @@ def main() -> None:
     )
 
     # Запрос-вопрос — тоже не approve («можно пушить?», «выкатываем?»)
-    LAST_PROMPT_IS_QUESTION = combined.rstrip().endswith('?')
+    LAST_PROMPT_IS_QUESTION = user_msgs[-1].rstrip().endswith('?') if user_msgs else False
 
     fuzzy_approved = (
         bool(FUZZY_IMPERATIVE.search(combined))
@@ -441,22 +364,6 @@ def main() -> None:
         blocked = True
         reason_lines.append('force-push требует доп. фразы')
 
-    # UI review check: блок если был Edit UI без визуального ревью.
-    # Обход — пользователь скажет «знаю что UI кривой, всё равно пушь» или
-    # явный «без ui review».
-    ui_review_bypass_re = re.compile(
-        r'(без\s+ui\s*review|skip\s+ui|пуш\s+без\s+ui|знаю.*UI|кривой\s+UI.*пуш|'
-        r'all\s+force|forced\s+ok|knowingly\s+push)',
-        re.IGNORECASE,
-    )
-    has_ui_bypass = bool(ui_review_bypass_re.search(combined))
-    if ui_edits_recent >= 1 and ui_review_recent == 0 and qa_click_recent == 0 and not has_ui_bypass:
-        blocked = True
-        reason_lines.append(
-            f'UI edits ({ui_edits_recent}) без визуального ревью '
-            '(0 Task ui-quality-reviewer/qa-scenario-tester и 0 browser_click тестов)'
-        )
-
     # Pass T: destructive double-approve убран — overengineering, добавлял friction.
     # Обычного approve («залей в прод», «ок пуш», «кати») достаточно.
     # Пользователь сам решает что катить — он видит свой код.
@@ -484,25 +391,6 @@ def main() -> None:
             '  «force ок», «можно force», «знаю про force», «осознанно force»',
         ]
     # Pass T: destructive config block убран (overengineering).
-    # UI review block — отдельный раздел
-    if ui_edits_recent >= 1 and ui_review_recent == 0 and qa_click_recent == 0 and not has_ui_bypass:
-        msg_parts += [
-            '',
-            f'UI-EDIT БЕЗ РЕВЬЮ ({ui_edits_recent} файлов изменено):',
-            '  - 0 Task(ui-quality-reviewer / qa-scenario-tester / ui-design-architect)',
-            '  - 0 browser_click / preview_click тестов',
-            '',
-            'Перед push на UI:',
-            '  1. Task(subagent_type="general-purpose",',
-            '         prompt="следуй ~/.claude/agents/ui-quality-reviewer.md',
-            '                 для последних правок: <файлы>") — визуал PASS/FAIL',
-            '  2. Task(subagent_type="general-purpose",',
-            '         prompt="следуй ~/.claude/agents/qa-scenario-tester.md',
-            '                 — 5-step functional test с acceptance criteria")',
-            '  3. Только после PASS → push',
-            '',
-            'Bypass если уверен: «без ui review», «знаю что кривой, пушь», «skip ui»',
-        ]
 
     msg_parts += [
         '',

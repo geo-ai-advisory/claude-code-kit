@@ -2,9 +2,9 @@
 """SessionStart + PostCompact hook — инжектит CRITICAL_FACTS + _index + log tail в контекст модели."""
 import sys, json, os, subprocess
 
-VAULT = "/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>/Projects/second-brain"
+VAULT = "/Users/via/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/B-project/Projects/second-brain"
 
-# Только в <your-workspace> запускаем
+# Только в B-project запускаем
 try:
     raw = sys.stdin.read()
     data = json.loads(raw or "{}")
@@ -12,7 +12,7 @@ except Exception:
     data = {}
 
 cwd = data.get("cwd") or os.getcwd()
-if "<your-workspace>" not in cwd:
+if "B-project" not in cwd:
     sys.exit(0)
 
 parts = []
@@ -73,7 +73,7 @@ print(json.dumps({
     "hookSpecificOutput": {
         "hookEventName": event,
         "additionalContext": (
-            "🧠 VAULT AUTO-BOOTSTRAP (Projects/<your-vault>/) — vault entry-point ритуал выполнен автоматически:\n\n"
+            "🧠 VAULT AUTO-BOOTSTRAP (Projects/second-brain/) — vault entry-point ритуал выполнен автоматически:\n\n"
             + context
             + "\n\nЕсли упомянут партнёр/проект/человек — Read соответствующую wiki/<category>/<slug>.md."
         )

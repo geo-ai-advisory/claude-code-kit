@@ -19,43 +19,43 @@ Geo - **бизнес-сторона** (Head of Product Growth, продакт). 
 Внутри vault / brief.md / screen-spec.md / коде — можно технически. Сообщения **в чат Geo** — только бизнес-язык.
 
 ## Кто
-<your-name> - Head of Product Growth, <YourCompany> (InsurTech/FinTech). Цель: O-1 виза США через Product-Led AI Automation портфолио. Позиционирование: AI-advisory <your-rate>.
+Geo (Georgii Motrenko, не Vozakov) - Head of Product Growth, Insapp (InsurTech/FinTech). Цель: O-1 виза США через Product-Led AI Automation портфолио. Позиционирование: AI-advisory $500/час.
 
 ## Активные проекты
-- report - отчёты <industry> + MFO Dashboard
-- <your-advisory> - воронка <your-advisory>
+- report - отчёты МФО + MFO Dashboard
+- geo-ai-advisory - воронка AI-advisory ($500/час)
 - hh - найм supply-side (вебмастера) + DM/PM
 - content-machine - кросспостинг 9 площадок
-- sales - продажи MFO-виджета (<sales-partner>)
-- product-team - продуктовая команда <YourCompany>
-- sverki - сверки <industry> с вендорами
+- sales - продажи MFO-виджета (Ларин)
+- product-team - продуктовая команда Insapp
+- sverki - сверки МФО с вендорами
 - legal - договоры МФО
 - self-learning-system - этот vault
 
-## <partners>
-- <Partner A>: <PARTNER_A_UUID>
-- <Partner B>: <PARTNER_B_UUID>
-- <Partner C>: <PARTNER_C_UUID>
-- <Partner D>: <PARTNER_D_UUID>
+## МФО партнёры
+- ЛОКО: 4e96325d-0734-4989-bddd-eebf459d132e
+- Хиппо: 8985c811-6de6-4fcb-96aa-e1d75adfb9a5
+- Пампаду: 2e1b192e-0126-4afd-b392-6e907045d225
+- МФО Инсап: a5842f98-c8a8-4a91-9dec-7cd27e734c00
 
 ## Команда (ключевые)
-<CEO>, Глеб-COO, <CTO>, <Tech-Lead>, Вася <QA-Lead>, <PM>, <sales-partner>.
+Возаков-CEO, Глеб-COO, Климов-CTO, Свистунов-владелец сроков, Вася Гуркин-QA-защита, Адриана-PM, Ларин-партнёр продажи.
 
 ## Технические инварианты
-- ProductTypeId=5 (<industry>), ChannelTypeId=2 (виджет)
+- ProductTypeId=5 (МФО), ChannelTypeId=2 (виджет)
 - CreditIssued=305, OfferChosen=190 (НЕ 42/38!)
 - Applications.Created = datetimeoffset +03:00, фильтр через CAST(... AS DATE)
-- MFO Dashboard: localhost:5000, ТОЛЬКО Projects/<your-dashboard>/
-- ARM Dashboard (другой!): localhost:4200, Projects/<your-arm>/
+- MFO Dashboard: localhost:5000, ТОЛЬКО Projects/report/dashboard/
+- ARM Dashboard (другой!): localhost:4200, Projects/console/
 - OmniRoute: localhost:20128
 - Domain почты: insap.tech (одна "p"!)
 
 ## Ключевые документы
-- Команда: <your-team-sheet-id>
-- Бэклог продукта: <your-backlog-sheet-id>
-- Реестр договоров: <your-contracts-sheet-id>
-- Шаблон сверки: <your-template-sheet-id>
-- Пароль публичных артефактов <your-username>.github.io: <your-password>
+- Команда: 1kAjDg4HOTfc1gzvpV2rOK7KwWeYgIxcUvTxp_rdaHak
+- Бэклог продукта: 1CxVdqu14HSO1t7Ohyz-0wBxoQ2mTiHt1-upjECe8P3A
+- Реестр договоров: 1V0Af3oExLlCk0f008p2dJbBq61UMs3oIpwx02GLAKEY
+- Шаблон сверки: 1M0EImzWTNc916nhGs3ygBjYgB63Da055UMZl77QKkA8
+- Пароль публичных артефактов engwatch.github.io: 0903
 
 ## Стиль
-Русский. Только ASCII-дефис `-`, никогда `—` или `–`. Кратко, без простыней. Имя - <your-name>.
+Русский. Только ASCII-дефис `-`, никогда `—` или `–`. Кратко, без простыней. Имя - Motrenko.

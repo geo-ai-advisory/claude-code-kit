@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stop hook: пишет компактный 3-5 строк summary в Projects/<your-vault>/log.md.
+"""Stop hook: пишет компактный 3-5 строк summary в Projects/second-brain/log.md.
 
 Идея из rohitg00/agentmemory — auto-summary на конце сессии чтобы знания не
 терялись на fast-сессиях где пользователь не пишет журнал руками.
@@ -9,17 +9,12 @@
 какие открытые вопросы. Если ничего значимого — пропускает.
 """
 
-# Global quiet kill switch — touch ~/claude-hooks/.quiet to silence ALL advisory hooks
-import sys as _sys_q, os as _os_q
-if _os_q.path.exists(_os_q.path.join(_os_q.path.dirname(_os_q.path.abspath(__file__)), '.quiet')):
-    _sys_q.exit(0)
-
 import sys, json, os, re, glob
 from collections import Counter
 from pathlib import Path
 
-LOG = "/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/<your-workspace>/Projects/<your-vault>/log.md"
-SESSIONS = "/Users/<you>/.claude/projects/-Users-via-Library-Mobile-Documents-com-apple-CloudDocs-Cursor-cloud-<your-workspace>"
+LOG = "/Users/via/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/B-project/Projects/second-brain/log.md"
+SESSIONS = "/Users/via/.claude/projects/-Users-via-Library-Mobile-Documents-com-apple-CloudDocs-Cursor-cloud-B-project"
 
 def main():
     try:
@@ -67,8 +62,8 @@ def main():
                     fp = tinput.get("file_path", "")
                     if fp:
                         # Сократить путь
-                        if "/<your-workspace>/" in fp:
-                            fp = fp.split("/<your-workspace>/", 1)[1]
+                        if "/B-project/" in fp:
+                            fp = fp.split("/B-project/", 1)[1]
                         edited_files[fp] += 1
             if c.get("type") == "text" and role == "user":
                 txt = c.get("text", "")
@@ -93,8 +88,8 @@ def main():
         topic = "usedesk"
     elif "hh" in all_paths:
         topic = "hh"
-    elif "<your-advisory>" in all_paths:
-        topic = "<your-advisory>"
+    elif "geo-ai-advisory" in all_paths:
+        topic = "geo-ai-advisory"
     elif "second-brain/wiki" in all_paths:
         topic = "vault"
     elif "claude/agents" in all_paths or "claude/hooks" in all_paths or "claude-hooks" in all_paths:

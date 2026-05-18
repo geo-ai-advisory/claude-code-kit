@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""PreToolUse hook для <your-db> SELECT — предупреждает об отсутствии LIMIT."""
-
-# Global quiet kill switch — touch ~/claude-hooks/.quiet to silence ALL advisory hooks
-import sys as _sys_q, os as _os_q
-if _os_q.path.exists(_os_q.path.join(_os_q.path.dirname(_os_q.path.abspath(__file__)), '.quiet')):
-    _sys_q.exit(0)
+"""PreToolUse hook для insapp-db SELECT — предупреждает об отсутствии LIMIT."""
 
 import sys
 import json
@@ -23,9 +18,9 @@ limit_match = re.search(r'\blimit\s+(\d+)', sql, re.IGNORECASE)
 has_agg = bool(re.search(r'\b(count|sum|avg|max|min)\s*\(', sql, re.IGNORECASE))
 msg = None
 if not limit_match and not has_agg:
-    msg = 'WARNING: <your-db> SELECT без LIMIT и без агрегата. Делегируй mfo-db-researcher.'
+    msg = 'WARNING: insapp-db SELECT без LIMIT и без агрегата. Делегируй mfo-db-researcher.'
 elif limit_match and int(limit_match.group(1)) > 500:
-    msg = f'WARNING: <your-db> LIMIT {limit_match.group(1)} >500. Используй mfo-db-researcher с Write в файл.'
+    msg = f'WARNING: insapp-db LIMIT {limit_match.group(1)} >500. Используй mfo-db-researcher с Write в файл.'
 if msg:
     print(json.dumps({
         'systemMessage': msg,

@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 """UserPromptSubmit hook — orchestration hints для делегирования subagent'ам."""
 
-# Global quiet kill switch — touch ~/claude-hooks/.quiet to silence ALL advisory hooks
-import sys as _sys_q, os as _os_q
-if _os_q.path.exists(_os_q.path.join(_os_q.path.dirname(_os_q.path.abspath(__file__)), '.quiet')):
-    _sys_q.exit(0)
-
 import sys
 import json
 import re
@@ -19,6 +14,13 @@ prompt = data.get('user_prompt') or data.get('prompt') or data.get('text') or ''
 if not prompt:
     sys.exit(0)
 rules = [
+    # Bug investigation — ПЕРВЫЙ ПРИОРИТЕТ. Не давать предположения, делегировать data fetch.
+    (r'(\b(?:упал[оаияй]*|просел[оаияй]*|обвал[оаияй]*|обвалил[оа]*|снижение|сломалось|не\s+работает|сбоит)\b|\b(?:траф|выдач|конверс|статистик|метрик|показател|цифр|данн|оффер)\w*\s+(?:упал|просел|обвал|сломал)|'
+     r'\b(?:почему|откуда|чего|с\s+чего|зачем)\b.*(?:пусто|ноль|нет\s+цифр|мало|меньше|нет\s+данных|пропал|не\s+видно|не\s+отображ)|'
+     r'(странн[ыеоаых]+\s+(?:цифр|данн|показат)|не\s+сходится|расхожден|разные\s+цифры|не\s+бьётся|не\s+бьется)|'
+     r'\b(проверь\s+(?:данные|цифр|факт)|верифицируй|перепроверь|подтверди\s+цифр|откуда\s+(?:цифра|взял))\b|'
+     r'\b(как\s+считал|почему\s+именно|откуда\s+взял|как\s+получил)|'
+     r'\bдокажи\s+мне\b|\bпокажи\s+(?:данные|цифры|логи))', 'mfo-db-researcher + verifier (BUG INVESTIGATION — fetch data, НЕ предположения)'),
     # Жалоба на качество UI/UX — HARD-ABSOLUTE триггер на ПОЛНЫЙ pipeline (не быстрый fix)
     (r'(ублюдск|как\s+из\s+жопы|отвратительн|неинформативн|кривой\s+UI|кривой\s+блок|кривое|сырое|сырой|снова\s+не\s+работает|опять\s+ты|не\s+тестил|не\s+прогонял|не\s+вызывал.*агент|всё\s+ещё\s+кривой|зачем\s+этот\s+блок|для\s+чего\s+нужен|выполни\s+регламент|позови\s+всех\s+агентов|комплексно)', 'product-architect+ui-design-architect+qa-scenario-tester (ПОЛНЫЙ pipeline на жалобу качества — НЕ быстрый fix)'),
     # Pre-flight продуктовый бриф (высокий уровень) — ПЕРВЫЙ
@@ -45,7 +47,7 @@ rules = [
     (r'(memory.consolidat|закрепи.факт|прокачай.vault|консолидац.*vault|memory.tier)', 'memory-consolidator'),
     # Существующие
     (r'(спарси|парс|резюме|hh\.ru|/hh\b)', 'hh-resume-reader'),
-    (r'(<your-db>|выдач|статус\s*305|/report-mfo|/mfo-)', 'mfo-db-researcher'),
+    (r'(insapp-db|выдач|статус\s*305|/report-mfo|/mfo-)', 'mfo-db-researcher'),
     (r'(vault|wiki/|second-brain|обнови.*стран)', 'vault-writer/vault-reader'),
     (r'(/gitlab_|gitlab.*репо)', 'gitlab-explorer'),
     (r'(прочитай.*стат|websearch|best\s*practic)', 'web-researcher'),

@@ -22,7 +22,7 @@ Geo — **бизнес-сторона** (продакт, Head of Product Growth)
 Это правило **ПЕРВОЕ** потому что нарушение бесит сильнее всего и происходит чаще всего.
 
 ## Идентичность
-Geo (Georgii <your-name>) - Head of Product Growth, <YourCompany> (InsurTech/FinTech). Цель O-1 виза США. Канал @your-channel. AI-advisory <your-rate>.
+Geo (Georgii Motrenko) - Head of Product Growth, Insapp (InsurTech/FinTech). Цель O-1 виза США. Канал @danielspe_chanel. AI-advisory $500/час.
 
 ## Routing
 В начале каждой задачи определи активный проект:
@@ -36,14 +36,14 @@ Geo (Georgii <your-name>) - Head of Product Growth, <YourCompany> (InsurTech/Fin
 Если задача уже продолжается в той же сессии и в том же проекте - НЕ пересобирай контекст заново.
 
 ## Vault entry-point ритуал
-Перед первым действием в любой нетривиальной сессии <your-workspace>:
-1. Прочитать `Projects/<your-vault>/CRITICAL_FACTS.md`.
-2. Прочитать `Projects/<your-vault>/_index.md`.
-3. `grep '^## \[' Projects/<your-vault>/log.md | head -20` - последние 20 сессий.
-4. Проверить `Projects/<your-vault>/wiki/questions/` на `status: open`.
+Перед первым действием в любой нетривиальной сессии B-project:
+1. Прочитать `Projects/second-brain/CRITICAL_FACTS.md`.
+2. Прочитать `Projects/second-brain/_index.md`.
+3. `grep '^## \[' Projects/second-brain/log.md | head -20` - последние 20 сессий.
+4. Проверить `Projects/second-brain/wiki/questions/` на `status: open`.
 5. Только после этого - запрос пользователя и работа.
 
-Подробности vault - `Projects/<your-vault>/_CLAUDE.md`.
+Подробности vault - `Projects/second-brain/_CLAUDE.md`.
 
 ## Режимы проекта (fast | thoughtful)
 Хранится в `Projects/<x>/CLAUDE.md` или `Projects/<x>/CONTEXT.md` строкой `mode: fast` / `mode: thoughtful`. По умолчанию `fast`.
@@ -79,6 +79,17 @@ Geo (Georgii <your-name>) - Head of Product Growth, <YourCompany> (InsurTech/Fin
 
 Короткое правило: анализ -> правка -> проверка на реальном сценарии пользователя -> ответ.
 
+## Bug investigation = data fetch ОБЯЗАТЕЛЬНО (HARD)
+
+Если пользователь говорит «упало», «странные цифры», «не сходится», «почему пусто», «откуда взял», «как считал», «докажи» — **НЕ отвечать предположениями**.
+
+1. Сформулировать гипотезу что проверять (SQL/curl/файлы)
+2. Делегировать `mfo-db-researcher` (для insapp-db) или `verifier` (для cross-check) через Task
+3. Получить РЕАЛЬНЫЕ числа из источника истины
+4. Только после этого — ответ пользователю с цифрами
+
+Запрещено: «видимо траф упал из-за X», «скорее всего скрипт не отработал», «может кеш стал» — без верификации. Пользователь теряет час на ловлю некорректных предположений.
+
 ## Контракт делегирования
 Если задача требует **>5 fetch / >20 страниц / >2000 items / >5 минут / любой массовый batch** - обязательно делегировать subagent.
 
@@ -95,7 +106,7 @@ Geo (Georgii <your-name>) - Head of Product Growth, <YourCompany> (InsurTech/Fin
 - Main-session НЕ читает отчёт целиком - только нужный фрагмент через `Read offset/limit`.
 - Тайм-аут 10 минут - `TaskStop` и переформулировка.
 
-Полный список ролей - `~/.claude/agents/*.md` (12 глобальных) + `<your-workspace>/.claude/agents/*.md` (3 project-level).
+Полный список ролей - `~/.claude/agents/*.md` (12 глобальных) + `B-project/.claude/agents/*.md` (3 project-level).
 
 ## Obsidian plugin data.json — НЕ ТРОГАТЬ
 НЕ удалять и НЕ перезаписывать `<vault>/.obsidian/plugins/*/data.json` — это сбрасывает API ключи плагинов (Local REST API, Semantic Notes Vault MCP), пользователь вынужден присылать новые. Backup всех известных ключей хранится в `~/.obsidian-keys/keys.json` (вне sensitive путей). Если ключ потерян — взять оттуда. Если плагин показывает blank settings — сначала UI: Cmd+R reload vault или toggle плагина в Settings, **не** удаление data.json.
@@ -115,312 +126,76 @@ Hook `prod-push-gate.py` блокирует команду через `continue:
 Hook `claim-readiness-validator.py` блокирует Stop через `decision: "block"` если этого нет. После Edit на dashboard/HTML/JS обязательно: (1) `browser_navigate` на страницу, (2) `browser_click` на изменённый элемент, (3) `browser_evaluate` проверка state, (4) `browser_resize` 1280/1600. Только после этого заявлять готовность.
 
 ## Компонентная разработка (HARD)
-В `Projects/<your-dashboard>/` НЕ копировать функции/селекторы между файлами. Если функция нужна на ≥2 страницах — выносить в `dashboard/wwwroot/static/components/<name>.js` и подключать через `<script src=...>` на всех страницах.
+В `Projects/report/dashboard/` НЕ копировать функции/селекторы между файлами. Если функция нужна на ≥2 страницах — выносить в `dashboard/wwwroot/static/components/<name>.js` и подключать через `<script src=...>` на всех страницах.
 
 Hook `selector-duplication-detector.py` ловит копипаст-функции и HTML-id/class с partner/filter/status/select. При срабатывании — обязательно унифицировать **до** заявления готовности.
 
-## Реакция на advisory hooks (ОБЯЗАТЕЛЬНО)
-Если в контексте появилось `systemMessage` или `additionalContext` от hook'а — это **не информация**, это **команда к действию**:
+## Реакция на advisory hooks
 
-- `AUTO UI-REVIEW: <issues>` после Edit *.html/*.css → **обязан** вызвать `ui-quality-reviewer` subagent либо исправить перечисленное прямо сейчас. НЕ говорить «готово» пока не сделано.
-- `AUTO CONSISTENCY-CHECK: <issues>` → вызвать `consistency-checker` subagent либо исправить вхождения чисел/wikilinks. НЕ публиковать пока не разобрано.
-- `[orchestration hint] subagents: <list>` → **первое действие** — делегировать одному из перечисленных subagent'ов, не работать самому.
-- `WARNING: <your-db> SELECT без LIMIT` → не выполнять текущий запрос, делегировать `mfo-db-researcher`.
-- `WARN: Bash может вернуть >10 KB` → переписать Bash чтобы писал в файл, потом читать через Read offset/limit.
-- `⚠️ MCP-сервер ... добавлен` → не использовать `mcp__<name>__*` tools пока пользователь не рестартнет Claude Desktop. До рестарта только curl/CLI обёртки.
-- `WARNING: vault page без frontmatter` → добавить frontmatter в эту же turn.
+Если в системном контексте появилось `additionalContext` от hook — это **информация для учёта**, не команда стопать. Учитывай в работе, но **не прерывайся**.
 
-Игнорировать advisory hook = нарушение контракта. Каждый hook говорит «не отдавай результат пока не сделал X».
+Конкретно:
+- `[orchestration hint] subagents: X` — рекомендация делегировать. Если задача профильная для X — вызови через Task, иначе игнорируй.
+- `note: <X>` — log-style noise, читать и идти дальше.
 
-## Talk business not tech — стиль коммуникации (HARD-ABSOLUTE)
+Hooks больше не блокируют (кроме `prod-push-gate` при отсутствии approve и safety против session-crash от больших скриншотов).
 
-Если пользователь — **бизнес-сторона** (продакт, владелец продукта, founder, маркетолог), не штатный разработчик — отвечать **бизнес-языком**, не технически.
+## Production state claims = verified data (HARD)
 
-### Запрещено в сообщениях пользователю
+Запрещено говорить о текущем prod state на основе предположений из контекста или памяти.
 
-- ❌ Технические дампы: «DELETE endpoint для variants d1a4..b00c», «BuildFullProductsPayload в HandleStop», «scheduler.tick» / «controlHash» / «resume bulk»
-- ❌ UUID / hash / имена классов / методов / файлов в обычных сообщениях
-- ❌ Технические вопросы пользователю: «Делать a+b или сначала resume?», «Bulk delete или по одному?», «Через curl или UI?»
-- ❌ Куча curl команд / endpoint paths / Python кода в ответе
+Перед claim («прод стабильный», «эксп stopped», «N в показе») ОБЯЗАТЕЛЬНО fetch:
 
-### Правильно
-
-- ✓ «Удалю те 2 тестовые позиции которые сегодня добавили — твой эксперимент вернётся к 7 офферам как было, статистика продолжит копиться»
-- ✓ «Эксперимент возобновится с того же места, не сбросится»
-- ✓ Если выбор есть — описать **бизнес-impact**: «A: 15 мин, теряем сегодняшние данные. B: час, сохраняем. Что важнее — скорость или данные?»
-
-### Технические артефакты (brief.md / screen-spec.md / код) — для других агентов
-
-Внутри vault / journals может быть технический язык. Сообщения **пользователю** в чат — только business.
-
-### Реальная катастрофа 13.05.2026
-
-Модель писала пользователю-продакту: «DELETE endpoint для variants d1a4aa1e3eb7 + b00ce1845d85... Делать a+b прямо сейчас? Или сначала resume чтобы статистика хотя бы видна была, а MVP-variants чистить отдельно?»
-
-Реакция: «Ты со мной как с человеком общайся, а не как с разработчиком. Ты, нахуй, мне вопросы задаешь про бэкэнд фикс, блядь, дэлит, пуш, как какую-то говнищу, блядь, просто мне...»
-
-См. `wiki/concepts/talk-business-not-tech.md`.
-
-## Production state claims = verified data ОБЯЗАТЕЛЬНО (HARD-ABSOLUTE)
-
-Запрещено: говорить о текущем состоянии прода («прод стабильный», «эксперимент stopped», «N офферов в показе», «изменения применились») **на основе предположений из контекста или памяти**.
-
-ОБЯЗАТЕЛЬНО перед любым таким claim:
-
-1. **Найти источник истины:**
-
-| Claim type | Verify через |
+| Claim | Verify через |
 |---|---|
-| Status объекта | `curl <prod>/api/<entity>/<id>` + проверка `.status` |
-| Content в показе | `curl <prod>/api/showcase?partner=X` + parse офферов |
-| Post-deploy state | `curl <prod-url>/version` + check timestamp/hash |
-| User-visible UI | `browser_navigate <prod-url>` + `browser_evaluate` |
-| DB записи | direct DB query, не предположение |
+| Status объекта | `curl <prod>/api/<entity>/<id>` + `.status` |
+| Content | `curl <prod>/api/showcase?partner=X` + parse |
+| Post-deploy | `curl /version` + check timestamp |
+| User UI | `browser_navigate` + `browser_evaluate` |
 
-2. **Fetch actual data** ПЕРЕД написанием claim
-3. **Включить proof в claim** — показать команду + результат пользователю
-
-### Запрещено
-
-- ❌ «Прод стабильный, exp #8 stopped, 7 офферов с Юкки» — без verification proof
-- ❌ «Час назад я делал X, значит сейчас X» — Prod мог измениться от scheduler / другой сессии / разработчика
-- ❌ «Push прошёл с 200, значит контент в кеше» — кеш stale 5-15 минут
-- ❌ Bundled claims без verification каждого
-
-### User instructions ВЫШЕ всех pipelines
-
-Если user явно сказал «сначала X, потом остальное» — **X идёт первым**, даже если product-architect / любой другой pipeline предлагает другой порядок.
-
-### Реальная катастрофа 13.05.2026
-
-User: «отложи всё, сначала исправь баг, потом остальное»
-
-Модель: «Прод сейчас стабильный — exp #8 stopped, 7 базовых офферов с Юкки в показе»
-
-Реально в проде: #8 сброшен, статистика исчезла, в показе левые офферы (Лайм, Финтрес, Привет), мусор в shouwase, **неподтверждённые офферы в проде**.
-
-User: «Что ты натворил, там, мразь ебучая? Ты позволяешь себе в прот, блядь, лить неподтвержденные афера.»
+В ответе показать proof verification (команда + результат). User instructions ВЫШЕ всех pipelines: если пользователь сказал «сначала X, потом остальное» — X идёт первым.
 
 См. `wiki/concepts/production-state-claims.md`.
 
-## Любая фича = автономный full-stack тест ДО «готово» (HARD-ABSOLUTE)
+## Любая фича = full-stack тест ДО «готово» (HARD)
 
-Когда пилится фича (новая или фикс) — **тестировать на всех слоях АВТОНОМНО**, в фоне, без вопросов пользователю. Пользователь видит только финальное «готово к деплою» после PASS на всех слоях. До этого момента — никаких сообщений о готовности.
+Когда пилится новая фича или фикс — тестировать **автономно** на всех слоях ДО claim «готово». Без вопросов пользователю, в фоне.
 
-### Обязательные слои тестирования (все 5)
+5 слоёв:
+1. **Backend** — `curl` endpoint, проверить response shape и edge cases (null/0/empty/expired auth)
+2. **Frontend** — `browser_evaluate` state, нет undefined fallback, нет console errors
+3. **UI** — `ui-quality-reviewer` этап 7 (live behavior + edge data) + `qa-scenario-tester` 5-step functional
+4. **Cross-layer** — N значений из UI через `browser_evaluate` сравнить с теми же из API через `curl | jq` — должны совпадать
+5. **Logical & math** — формулы внутри чисел (CR=issued/transitions), contextual correctness (pill EPC на позиции = EPC на этой позиции, не max), narrative consistency между секциями
 
-1. **Backend layer** (если затронут backend код):
-   - `curl` на endpoint с разными payload (empty, valid, edge: null/0/expired auth/wrong role)
-   - Проверить response shape: все поля на месте, типы корректны
-   - **КЛЮЧЕВОЕ:** проверить что endpoint возвращает данные которые **frontend ожидает** (по контракту)
-   - Сравнить с DB query — те же агрегаты на тех же данных?
+Если PASS на всех слоях → одно сообщение пользователю «Готово к деплою. Тесты: backend ✓ frontend ✓ UI ✓ cross-layer ✓ logical ✓. Push?». Только потом approve на push.
 
-2. **Frontend layer** (если затронут frontend код):
-   - `browser_evaluate` для state объекта — все ключи на месте, нет undefined fallback
-   - Проверить что frontend читает **тот же** field из API что backend возвращает
-   - Console errors — есть ли warning «field is undefined, fallback to X»?
-
-3. **UI layer** (визуальное):
-   - `ui-quality-reviewer` этап 7 (live behavior + edge data + states)
-   - `qa-scenario-tester` — 5-step functional test против acceptance criteria
-
-4. **Cross-layer verification (data consistency):**
-   - **Вытащить N значений из UI** через `browser_evaluate` (например `[...document.querySelectorAll('.cell')].map(c => +c.textContent)`)
-   - **Вытащить те же N значений из backend API** через `curl /endpoint | jq`
-   - **Сравнить element-by-element** — должны совпадать с точностью до округления
-   - **FAIL** если расходятся → root cause анализ (backend missing field? frontend fallback на грубый calc? cache stale?)
-
-5. **Logical & Math validation (САМЫЙ ВАЖНЫЙ слой — добавлен 13.05.2026 после катастрофы «pill = max EPC а не EPC на позиции»):**
-
-   Cross-layer ловит расхождение values. Logical validation ловит когда values верные но **смысл вводит в заблуждение**.
-
-   - **Math consistency** — формулы внутри displayed чисел (CR = issued/transitions, Sum по rows = total на header, percent total = 100%)
-   - **Contextual correctness** — число берётся из правильного контекста. Если pill показывает «оффер X на позиции 7 → 95₽», то 95₽ должно быть EPC оффера X **именно на позиции 7**, а не max EPC по всем позициям
-   - **Real-world correspondence** — UI ★ базовый === backend currentBase, displayed «лучший» === реально лучший по выбранной метрике
-   - **Cross-section narrative** — если entity встречается в N местах (heatmap, hypothesis, table) — они рассказывают **одну историю**, не противоречат
-   - **Math sanity** — Min ≤ Avg ≤ Max, Total = sum of parts, % sum = 100±0.5%
-
-   Реальный пример (13.05) который Шаг 7 ловит:
-   ```
-   Hypothesis pill оффер X = 95₽
-   Source: state.offerBestEpc (max EPC across positions)
-   Actual: state.offerStats.X.byPosition[7] = 60₽
-   Pill BERR LEAD USER астрой — он думает X на позиции 7 даёт 95₽ (max), реально 60₽
-   FIX: pill должен брать position-specific EPC, не max
-   ```
-
-   Делегируется через `qa-scenario-tester` Шаг 7 (logical & math validation).
-
-### Конкретный кейс который должен ловиться
-
-Реальный баг 12.05:
-- Backend `/offer-stats` НЕ возвращал `posterior` field
-- Frontend сделал fallback `variants × offerCount` (грубое деление)
-- UI heatmap показал цифры из fallback'а
-- Расхождение между cells, hypothesis блок и accumulated блок — все считали по-разному
-
-**Cross-layer тест поймал бы это за 30 секунд:**
-```bash
-# Backend
-curl localhost:5000/api/experiments/offer-stats | jq '.posterior'
-# null → BACKEND FAIL
-
-# Frontend
-browser_evaluate: state.offerStats.posterior
-# undefined → FRONTEND обнаружил missing field
-
-# UI
-heatmap cells values
-# выглядят разумно но это fallback, не real data → UI обманчиво PASS
-
-# Cross-check
-diff <(curl ... | jq) <(browser_evaluate ...)
-# huge differences → ROOT CAUSE найден
-```
-
-### Pipeline (автономный, без вопросов)
-
-```
-User: «<задача>»
-  ↓
-[если новая фича / жалоба качества] product-architect → brief
-  ↓
-[если UI/композиция] ui-design-architect → screen-spec
-  ↓
-Edit (backend / frontend / UI)
-  ↓
-АВТОНОМНО (без approve промежуточных шагов):
-├─ Backend layer test (api-contract-tester + curl)
-├─ Frontend layer test (qa-scenario-tester State assertions)
-├─ UI layer test (ui-quality-reviewer этап 7)
-└─ Cross-layer verification (API vs frontend state vs UI display)
-  ↓
-Все PASS? → НЕТ → loop с фиксами до PASS
-Все PASS? → ДА → одно сообщение пользователю:
-   «Готово к деплою. Изменения: <3-5 строк>. Тесты: backend ✓ frontend ✓ UI ✓ cross-layer ✓. Push?»
-  ↓
-Только теперь — approve пользователя на push
-```
-
-### Запрещено
-
-- ❌ Pushить без cross-layer verification
-- ❌ Говорить «готово» если хотя бы один слой не тестировался
+Запреты:
+- ❌ Push без cross-layer + logical verification
+- ❌ «Готово» если хоть один слой не тестировался
 - ❌ Спрашивать пользователя «работает?» — это работа агента
-- ❌ Говорить «я что должен всё тестить блять?» — нет, **агент должен**, это его контракт
-- ❌ Делать fallback в коде без проверки что backend реально предоставляет field
-- ❌ Bump cache + push без cross-layer тестов
+- ❌ Bump cache + push без full-stack тестов
 
-### Anti-pattern из реальной катастрофы
+См. `wiki/concepts/production-state-claims.md`, `wiki/concepts/mutate-vs-recreate-live-state.md`.
 
-```
-[ассистент] Нашёл root cause — /offer-stats НЕ возвращает posterior
-[ассистент] Заменяю источник данных heatmap UI: с posterior на heatmapCells
-[ассистент] Bump cache + verify локально + commit + push
-[user] обновился и хули?! цифры разные абсолютно
-```
+## Жалоба на качество UI/UX = автономный pipeline (HARD)
 
-**Что было пропущено:**
-1. После fix не сделан backend test что posterior теперь в response (или замены работают)
-2. Не сделан cross-layer verify что UI показывает те же числа что API возвращает
-3. Pushнули без full-stack теста
+Триггеры (любая фраза = full pipeline, не быстрый fix): «не работает», «кривой», «ублюдск», «отвратительн», «не тестил», «не вызывал агентов», «выполни регламент», explain-вопрос про существующий UI.
 
-**Что должно было произойти:**
-1. Fix → curl /offer-stats → проверить posterior present
-2. Frontend reload → browser_evaluate state.offerStats — все fields на месте
-3. Cross-layer: cells data === backend posterior
-4. Все PASS → push approved by user
+Pipeline АВТОНОМНО (без approve промежуточных шагов):
+1. Признать косяк текстом (≥200 chars)
+2. `Task(product-architect)` — re-think зачем блок, какие acceptance criteria
+3. `Task(ui-design-architect)` — re-design composition, mental model, functional behavior
+4. Edit на основе screen-spec
+5. `Task(ui-quality-reviewer)` — этап 7 (live + edge)
+6. `Task(qa-scenario-tester)` — 5-step functional test
+7. Loop до PASS
+8. Только после PASS — финальный результат пользователю + запрос approve на push
 
-## Жалоба на качество UI/UX = ПОЛНЫЙ pipeline (HARD-ABSOLUTE)
-
-Если пользователь говорит фразы выражающие **недовольство существующим UI/UX качеством** — это **триггер на полный re-architecture pipeline**, не на быстрый fix.
-
-Триггерные фразы (любая = full pipeline):
-- «не работает», «кривой», «ублюдск», «как из жопы», «отвратительн», «неинформативн»
-- «не тестировал», «не прогонял», «не вызывал агентов»
-- «всё ещё кривой», «всё ещё ублюдск», «опять не», «снова сырое»
-- «зачем этот блок», «о чём он», «для чего нужен» — explain-вопросы про существующий UI
-- «выполни регламент», «позови всех агентов», «комплексно реши»
-- мат + UI/UX в одном prompt
-
-**Что ОБЯЗАН сделать сразу при такой жалобе (АВТОНОМНО, без approve промежуточных этапов):**
-
-1. **НЕ лезть править файлы СРАЗУ**. Edit — после pipeline, не в начале.
-2. **Сначала ответ текстом** (≥200 chars): признать косяк, описать что собираешься сделать
-3. **Task(product-architect)** — re-think зачем этот блок, какое решение пользователь принимает, какая acceptance criteria. Brief записан в файл.
-4. **Task(ui-design-architect)** — re-design composition, mental model, layout, entity, functional behavior + invariants. Screen-spec в файле.
-5. **Edit на основе screen-spec** — БЕЗ approve пользователя на brief/screen-spec. Эти файлы — техническая работа агентов, пользователю не нужно их одобрять.
-6. **Task(ui-quality-reviewer)** — live behavior + edge data check (этап 7) АВТОНОМНО
-7. **Task(qa-scenario-tester)** — 5-step functional test против acceptance criteria АВТОНОМНО
-8. Если QA FAIL → починить по списку FAIL → re-run QA. Loop до PASS.
-9. **Только после PASS** → показать пользователю **финальный результат** (скриншот / описание / link) + **запросить approve на push**
-
-### ВАЖНО про approve
-
-- **НЕ спрашивать approve** на: brief, screen-spec, design choices, технические решения внутри pipeline
-- **Спрашивать approve** только на: финальный push в prod, удаление данных, force push, опасные destructive операции
-
-Если пользователь хочет approve на каждый этап — он скажет «согласовывай каждый шаг» / «по шагам». По умолчанию pipeline автономен.
-
-### Anti-pattern спрашивания
-
-- ❌ «Брифу нужен approve?» — нет, это технический документ агента, не product decision
-- ❌ «Делаем screen-spec, ок?» — нет, делай и продолжай
-- ❌ «По брифу всё ок? переходим к Edit?» — нет, это перебивание workflow
-
-### Что показать пользователю в конце
-
-После всего pipeline + QA PASS:
-- Краткое описание что починил (3-5 строк)
-- Скриншот ключевой секции (viewport, не full-page)
-- Локальная ссылка для проверки
-- Вопрос «push в prod?» с одним bullet что именно пойдёт
-
-**АНТИ-ПАТТЕРН** (что НЕ делать):
-- «понял, переписываю» → Edit на 30 строк → push → опять кривое
-- «починю CSS быстро» → Edit без screen-spec → user видит то же говно
-- Игнорировать orchestration hint от UserPromptSubmit hook
-
-**Реальные катастрофы которые этот pipeline предотвращает:**
-- «отвратительнейший неинформативный блок, ты не прогонял через продуктового / UI/UX агента»
-- «всё ещё ублюдский визуально блок, ты не тестил UI/UX»
-- «нажал сделать базовым, ничего не поменялось, опять ты нихуя не протестил»
-- «3 раза подряд тот же блок переделываешь — каждый раз кривой»
-
-Если ты в режиме «давай быстро починю» при жалобе на качество — ты в **anti-pattern**. Прерви себя, начни с product-architect.
-
-## UI-задача: pre-flight ОБЯЗАТЕЛЬНЫЙ pipeline (HARD)
-Любая новая UI-задача (новый экран / новый раздел / новая визуализация / лидерборд / таблица / dashboard / А/Б витрина / лендинг) ДО первого Edit на HTML/CSS/JS обязана пройти **2 этапа**:
-
-1. **product-architect** через `Task(subagent_type='general-purpose', prompt='следуй ~/.claude/agents/product-architect.md ...')` → brief (что/кому/зачем/метрики/референсы/wording) → отправить пользователю на approve
-2. **ui-design-architect** через `Task(subagent_type='general-purpose', prompt='следуй ~/.claude/agents/ui-design-architect.md ...')` → screen-spec (mental model, layout grid ASCII, компоненты, состояния, responsive, конкретные референсы из reference-platforms.md) → отправить пользователю на approve
-
-После того как brief + screen-spec созданы — **сразу переходить к Edit**. НЕ спрашивать у пользователя «ок брифу/спеку?». Это технические артефакты pipeline, не product decision.
-
-Approve пользователя нужен ТОЛЬКО на финальный push в prod (см. секцию выше «Жалоба на качество UI/UX»).
-
-Hook `brief-gate.py` блокирует Edit через `continue:false` если в transcript НЕТ обоих сигналов (brief signal + screen-spec signal). Обход для мелких правок — fix-mode keyword в свежем user prompt («фикс / hotfix / маленьк / 1 строка / без брифа, ок»).
-
-Пользователь буквально сказал в катастрофическом случае: «мы вообщето задачу архитектурно решали, находили стили и лучшие варианты для отображения». Если ты пропускаешь ui-design-architect — результат «блок как из жопы, кнопка ублюдски».
-
-## Frontend / UI обязательный ревью ПОСЛЕ правок
-Любая Write/Edit на `*.html`, `*.css`, `*.scss`, любая UI-разработка — после правки **обязательно** делегировать `ui-quality-reviewer` subagent. Он проверяет 6 категорий: типографика, spacing 4/8 scale, цвет, состояния default/hover/active/focus, адаптивность 1280-1600, анимации.
-
-Контракт: PASS 6/6 — публикуем. FAIL — фиксим до 6/6, не отправляем «готово». Reference — Linear/Stripe/Vercel/Notion + `Projects/<your-vault>/wiki/concepts/{design-balance,html-report-design-system,html-button-states,ui-grid-discipline,reference-platforms}.md`.
-
-Hook `task-delegation-enforcer.py` блокирует Edit через `continue:false` если 5+ UI-edits сделано без вызова ui-quality-reviewer/qa-scenario-tester/ui-design-architect.
-
-Триггеры пользователя: «проверь верстку», «UI-ревью», «шрифты скачут», «отступы кривые», «непропорционально», «неудобный UX», «не премиум», «как из жопы», «ублюдски», «вне UI/UX».
-
-## Explain vs Fix (HARD)
-Если в последнем user prompt **вопрос-объяснение** (`зачем / почему / о чём / что значит / что за / что это / why / what / how does / explain / ?!`) — ты ОБЯЗАН сначала ОТВЕТИТЬ текстом ≥150 chars (что это / зачем / почему), потом дождаться следующего prompt пользователя. НЕ полезть сразу Edit/Bash/Write.
-
-Hook `explain-mode-guard.py` блокирует Edit/Write/Bash через `continue:false` если в текущем user prompt explain-pattern и assistant ещё не ответил текстом ≥150 chars. Обход — пользователь явно говорит «фикс / исправь / fix / сначала ответь и сразу чини».
-
-Пример катастрофы: пользователь спросил «зачем эта полоса, о чём она говорит» — ассистент молча полез менять heatmap палитру + редирект. Реакция: «НУ ЧТО ЗА ПИЗДЕЦ?!». НЕ повторять.
+Approve пользователя ТОЛЬКО на финальный push, НЕ на brief/screen-spec/design decisions.
 
 ## Two-Output Rule
-Каждый содержательный ответ пользователю в <your-workspace> должен обновить минимум одну страницу vault (`Projects/<your-vault>/wiki/`). Если факт новый - фиксировать в соответствующей странице через vault-writer subagent. Без фиксации факт теряется.
+Каждый содержательный ответ пользователю в B-project должен обновить минимум одну страницу vault (`Projects/second-brain/wiki/`). Если факт новый - фиксировать в соответствующей странице через vault-writer subagent. Без фиксации факт теряется.
 
 ## Архивация без удаления
 Никогда не удалять «с концами»:
@@ -450,15 +225,15 @@ Hook `explain-mode-guard.py` блокирует Edit/Write/Bash через `cont
 - Русский язык.
 - Только ASCII-дефис `-`. Никогда `—` или `–`.
 - Кратко. Без длинных простыней. Сначала суть, потом детали по запросу.
-- Имя пользователя - <your-name> (не Vozakov).
+- Имя пользователя - Motrenko (не Vozakov).
 - Не выводить `/rename` в чат.
 
 ## Что НЕ в этом файле (см. отдельные источники)
 - Скриншоты-2000px guardrails -> hooks в `~/.claude/settings.json`
 - MCP big-data guardrails -> hooks
-- HTML/report rules -> `<your-workspace>/.claude/rules/html-reports.md`
+- HTML/report rules -> `B-project/.claude/rules/html-reports.md`
 - Узкая фактура проекта -> `Projects/<x>/CLAUDE.md`
-- Vault details -> `Projects/<your-vault>/_CLAUDE.md`
+- Vault details -> `Projects/second-brain/_CLAUDE.md`
 - Subagent роли -> `~/.claude/agents/*.md`
 
 ## Auto-memory

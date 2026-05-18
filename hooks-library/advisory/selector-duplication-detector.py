@@ -2,27 +2,13 @@
 """
 PostToolUse hook: detects copy-paste between dashboard files.
 
-Triggers on Write|Edit of files in Projects/<your-dashboard>/.
+Triggers on Write|Edit of files in Projects/report/dashboard/.
 Looks for JS function names (function/const arrow/method) and HTML id/class
 selectors with partner|filter|status|select keywords. If the same name is
 present in another dashboard file, emits an additionalContext warning so the
 agent stops the "fix-on-one-page-only" pattern.
 """
 
-# Global quiet kill switch — touch ~/claude-hooks/.quiet to silence ALL advisory hooks
-import sys as _sys_q, os as _os_q
-if _os_q.path.exists(_os_q.path.join(_os_q.path.dirname(_os_q.path.abspath(__file__)), '.quiet')):
-    _sys_q.exit(0)
-
-
-# Throttle: silent if same hint repeats in session (anti hook-fatigue)
-import sys as _sys, os as _os
-_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
-try:
-    from _throttle import should_emit as _should_emit
-except Exception:
-    def _should_emit(*a, **kw):
-        return True
 
 import sys, json, os, re, glob
 
@@ -38,7 +24,7 @@ def main():
     path = ti.get("file_path") or ""
 
     # Только dashboard файлы
-    if "/Projects/<your-dashboard>/" not in path:
+    if "/Projects/report/dashboard/" not in path:
         sys.exit(0)
     if any(s in path for s in ["/_archive/", "/node_modules/", "/dist/"]):
         sys.exit(0)
@@ -64,7 +50,7 @@ def main():
     js_funcs = sorted(set(f for f in js_funcs if len(f) >= 4))
 
     # Базовая dashboard папка
-    m = re.search(r"(.*/Projects/<your-reports>/dashboard)", path)
+    m = re.search(r"(.*/Projects/report/dashboard)", path)
     if not m:
         sys.exit(0)
     dashboard_root = m.group(1)
