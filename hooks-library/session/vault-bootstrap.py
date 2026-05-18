@@ -2,7 +2,7 @@
 """SessionStart + PostCompact hook — инжектит CRITICAL_FACTS + _index + log tail в контекст модели."""
 import sys, json, os, subprocess
 
-VAULT = "/Users/via/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/B-project/Projects/second-brain"
+VAULT = "/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/B-project/Projects/second-brain"
 
 # Только в B-project запускаем
 try:

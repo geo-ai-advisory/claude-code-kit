@@ -13,8 +13,8 @@ import sys, json, os, re, glob
 from collections import Counter
 from pathlib import Path
 
-LOG = "/Users/via/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/B-project/Projects/second-brain/log.md"
-SESSIONS = "/Users/via/.claude/projects/-Users-via-Library-Mobile-Documents-com-apple-CloudDocs-Cursor-cloud-B-project"
+LOG = "/Users/<you>/Library/Mobile Documents/com~apple~CloudDocs/Cursor cloud/B-project/Projects/second-brain/log.md"
+SESSIONS = "/Users/<you>/.claude/projects/-Users-via-Library-Mobile-Documents-com-apple-CloudDocs-Cursor-cloud-B-project"
 
 def main():
     try:

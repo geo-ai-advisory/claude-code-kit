@@ -208,7 +208,7 @@ def read_recent_user_messages(session_id: str, limit: int = 30) -> list[str]:
     if not session_id:
         return []
 
-    base_dir = '/Users/via/.claude/projects/-Users-via-Library-Mobile-Documents-com-apple-CloudDocs-Cursor-cloud-B-project'
+    base_dir = '/Users/<you>/.claude/projects/-Users-via-Library-Mobile-Documents-com-apple-CloudDocs-Cursor-cloud-B-project'
     transcript_path = os.path.join(base_dir, f'{session_id}.jsonl')
 
     if not os.path.isfile(transcript_path):
